@@ -1,0 +1,77 @@
+/* =====================================================
+   LEARNFLOW - ESTILOS DA SIDEBAR COLAPSÁVEL
+   ===================================================== */
+
+/* Transições suaves */
+#sidebar {
+    transition: width 0.3s ease-in-out;
+}
+
+#main-content {
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.sidebar-text,
+.sidebar-section-title,
+.sidebar-user-info {
+    transition: opacity 0.2s ease-out, max-width 0.3s ease-in-out;
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar-icon,
+.sidebar-logo,
+.sidebar-avatar {
+    transition: margin 0.3s ease-in-out;
+}
+
+/* Estado colapsado */
+.sidebar-collapsed {
+    width: 5rem !important; /* 80px */
+}
+
+/* Ocultar textos quando colapsada */
+.sidebar-collapsed .sidebar-text,
+.sidebar-collapsed .sidebar-section-title,
+.sidebar-collapsed .sidebar-user-info {
+    opacity: 0;
+    max-width: 0;
+    pointer-events: none;
+}
+
+/* Centralizar ícones quando colapsada */
+.sidebar-collapsed .sidebar-icon,
+.sidebar-collapsed .sidebar-logo {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Ajustar footer quando colapsada */
+.sidebar-collapsed .sidebar-footer {
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+}
+
+.sidebar-collapsed .sidebar-avatar {
+    margin-left: 0;
+}
+
+/* Ajustar links quando colapsada */
+.sidebar-collapsed .nav-link {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Mobile: Sidebar fora da tela */
+@media (max-width: 768px) {
+    #sidebar {
+        transform: translateX(-100%);
+    }
+    
+    #sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+}

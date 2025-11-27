@@ -1,0 +1,120 @@
+<!-- file: views/partials/navbar.ejs -->
+
+<header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            
+            <!-- Lado Esquerdo: Toggle + Botão Criar -->
+            <div class="flex items-center space-x-2">
+                <!-- Botão Toggle Sidebar -->
+                <button id="sidebar-toggle" 
+                        title="Recolher/Expandir menu" 
+                        class="p-2 rounded-md text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150">
+                    <i class="fa-solid fa-bars h-5 w-5"></i>
+                </button>
+                
+                <!-- Botão Criar Curso (só para professor/admin) -->
+                <% if (typeof usuario !== 'undefined' && usuario && (usuario.tipo === 'professor' || usuario.tipo === 'administrador')) { %>
+                <button onclick="alert('Modal de criar curso - implementar depois')" 
+                        title="Criar novo curso" 
+                        class="flex items-center p-2 rounded-md text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150">
+                    <i class="fa-solid fa-plus h-5 w-5"></i>
+                </button>
+                <% } %>
+            </div>
+
+            <!-- Lado Direito: Theme Toggle + User Menu -->
+            <div class="flex items-center space-x-3">
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" 
+                        title="Alternar tema" 
+                        class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150">
+                    <i class="fa-solid fa-sun h-5 w-5 dark:hidden"></i>
+                    <i class="fa-solid fa-moon h-5 w-5 hidden dark:block"></i>
+                </button>
+
+                <!-- User Menu -->
+                <div class="relative">
+                    <button id="user-menu-button" 
+                            type="button" 
+                            class="flex text-sm bg-gray-200 dark:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-150">
+                        <% if (typeof usuario !== 'undefined' && usuario && usuario.foto_perfil) { %>
+                            <img src="/uploads/images/<%= usuario.foto_perfil %>" 
+                                 alt="<%= usuario.nome %>" 
+                                 class="h-10 w-10 rounded-full">
+                        <% } else { %>
+                            <span class="h-10 w-10 rounded-full bg-teal-100 dark:bg-teal-700 text-teal-700 dark:text-teal-100 flex items-center justify-center text-sm font-semibold">
+                                <%= (typeof usuario !== 'undefined' && usuario && usuario.nome) 
+                                    ? usuario.nome.charAt(0).toUpperCase() 
+                                    : 'U' %>
+                            </span>
+                        <% } %>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="user-menu-dropdown" 
+                         class="hidden origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
+                        <!-- User Info -->
+                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                <%= (typeof usuario !== 'undefined' && usuario && usuario.nome) 
+                                    ? usuario.nome 
+                                    : 'Usuário' %>
+                            </p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                <%= (typeof usuario !== 'undefined' && usuario && usuario.email) 
+                                    ? usuario.email 
+                                    : 'usuario@email.com' %>
+                            </p>
+                        </div>
+                        
+                        <!-- Menu Items -->
+                        <div class="py-1">
+                            <a href="/user/perfil" 
+                               class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150">
+                                <i class="fa-solid fa-user-circle fa-fw mr-3 text-gray-400"></i>
+                                Perfil
+                            </a>
+                            <a href="/user/configuracoes" 
+                               class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150">
+                                <i class="fa-solid fa-gear fa-fw mr-3 text-gray-400"></i>
+                                Configurações
+                            </a>
+                        </div>
+                        
+                        <!-- Logout -->
+                        <div class="py-1 border-t border-gray-200 dark:border-gray-700">
+                            <form action="/auth/logout" method="POST">
+                                <button type="submit" 
+                                        class="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150">
+                                    <i class="fa-solid fa-right-from-bracket fa-fw mr-3 text-gray-400"></i>
+                                    Sair
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    // Toggle user menu dropdown
+    document.getElementById('user-menu-button')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('user-menu-dropdown').classList.toggle('hidden');
+    });
+
+    // Fechar ao clicar fora
+    document.addEventListener('click', (e) => {
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenuDropdown = document.getElementById('user-menu-dropdown');
+        
+        if (userMenuButton && userMenuDropdown && 
+            !userMenuButton.contains(e.target) && 
+            !userMenuDropdown.contains(e.target)) {
+            userMenuDropdown.classList.add('hidden');
+        }
+    });
+</script>

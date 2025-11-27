@@ -1,74 +1,136 @@
 <!-- file: views/partials/sidebar.ejs -->
 
+<!-- Overlay para mobile -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
+
+<!-- Sidebar -->
 <aside id="sidebar" 
-       class="fixed inset-y-0 left-0 transform -translate-x-full 
-              md:relative md:translate-x-0 md:w-64  
-              transition-all duration-300 ease-in-out 
-              flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
-              flex-shrink-0 z-40 overflow-hidden">
+       class="fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 w-64 transition-all duration-300 ease-in-out flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-shrink-0 z-40 overflow-hidden">
     
-    <div class="flex items-center py-4 flex-shrink-0 px-4"> 
-        <a href="/inicio" class="flex items-center">
-            <span class="bg-teal-600 dark:bg-teal-500 text-white rounded-md px-2 py-1 mr-2 text-xl font-bold">L</span> 
-            <span class="text-2xl font-bold text-gray-900 dark:text-white">LearnFlow</span>
+    <!-- Header com Logo -->
+    <div class="flex items-center justify-between py-4 px-4 h-20 flex-shrink-0"> 
+        <a href="/inicio" class="flex items-center overflow-hidden">
+            <!-- Logo (troca com dark mode) -->
+            <img src="/images/logo.png" 
+                 alt="LearnFlow Logo" 
+                 class="sidebar-logo h-12 w-12 flex-shrink-0  transition-all duration-300 dark:hidden">
+            <img src="/images/logo1.png" 
+                 alt="LearnFlow Logo" 
+                 class="sidebar-logo h-12 w-12 flex-shrink-0  transition-all duration-300 hidden dark:block">
+            
+            <!-- Texto "LearnFlow" -->
+            <span class="sidebar-text text-2xl font-bold text-gray-900 dark:text-white whitespace-nowrap">LearnFlow</span>
         </a>
     </div>
 
+    <!-- Navegação -->
     <nav class="flex-1 overflow-y-auto p-4 space-y-2"> 
-        <% 
-        const linkClass = (linkName) => `flex items-center px-3 py-2 text-sm font-medium rounded-md group ${
-            (typeof activeLink !== 'undefined' && activeLink === linkName) 
-            ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
-            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
-        }`; 
-        const iconBaseClass = "fa-fw mr-3 flex-shrink-0 w-5 h-5"; 
-        %>
-
+        
+        <!-- Seção: PRINCIPAL -->
         <div>
-            <h3 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Principal</h3>
+            <h3 class="sidebar-section-title px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Principal
+            </h3>
             <div class="mt-1 space-y-1">
-                <a href="/inicio" class="<%= linkClass('inicio') %>"><i class="fa-solid fa-house <%= iconBaseClass %>"></i> Início</a>
-                
-                <a href="/cursos" class="<%= linkClass('meus_cursos') %>"><i class="fa-solid fa-graduation-cap <%= iconBaseClass %>"></i> Meus Cursos</a>
+                <a href="/inicio" 
+                   class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-md group transition-colors duration-150
+                          <%= (typeof activeLink !== 'undefined' && activeLink === 'inicio') 
+                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' %>">
+                    <i class="fa-solid fa-house fa-fw mr-3 flex-shrink-0 w-5 h-5 sidebar-icon"></i>
+                    <span class="sidebar-text">Início</span>
+                </a>
+                <a href="/meus-cursos" 
+                   class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-md group transition-colors duration-150
+                          <%= (typeof activeLink !== 'undefined' && activeLink === 'meus-cursos') 
+                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' %>">
+                    <i class="fa-solid fa-graduation-cap fa-fw mr-3 flex-shrink-0 w-5 h-5 sidebar-icon"></i>
+                    <span class="sidebar-text">Meus Cursos</span>
+                </a>
             </div>
         </div>
         
-         <% if (usuario && usuario.tipo === 'administrador') { %>
-            <div class="pt-4">
-                <h3 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Admin</h3>
-                <div class="mt-1 space-y-1">
-                    <a href="/admin/estatisticas" class="<%= linkClass('dashboard') %>"><i class="fa-solid fa-chart-simple <%= iconBaseClass %>"></i> Dashboard</a>
-                    <a href="/admin/usuarios" class="<%= linkClass('usuarios') %>"><i class="fa-solid fa-users <%= iconBaseClass %>"></i> Usuários</a>
-                    <a href="/admin/solicitacoes" class="<%= linkClass('solicitacoes') %>"><i class="fa-solid fa-user-plus <%= iconBaseClass %>"></i> Solicitações</a> 
-                </div>
-            </div>
-         <% } %>
-        
+        <!-- Seção: ADMIN (só aparece para administradores) -->
+        <% if (typeof usuario !== 'undefined' && usuario && usuario.tipo === 'administrador') { %>
         <div class="pt-4">
-            <h3 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Conta</h3>
+            <h3 class="sidebar-section-title px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Admin
+            </h3>
             <div class="mt-1 space-y-1">
-                <a href="/user/perfil" class="<%= linkClass('perfil') %>"><i class="fa-solid fa-user-circle <%= iconBaseClass %>"></i> Perfil</a>
-                <a href="#" class="<%= linkClass('notificacoes') %>"><i class="fa-solid fa-bell <%= iconBaseClass %>"></i> Notificações</a>
-                <a href="/user/configuracoes" class="<%= linkClass('configuracoes') %>"><i class="fa-solid fa-gear <%= iconBaseClass %>"></i> Configurações</a>
+                <a href="/admin/estatisticas" 
+                   class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-md group transition-colors duration-150
+                          <%= (typeof activeLink !== 'undefined' && activeLink === 'dashboard') 
+                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' %>">
+                    <i class="fa-solid fa-chart-simple fa-fw mr-3 flex-shrink-0 w-5 h-5 sidebar-icon"></i>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+            </div>
+        </div>
+        <% } %>
+        
+        <!-- Seção: CONTA -->
+        <div class="pt-4">
+            <h3 class="sidebar-section-title px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Conta
+            </h3>
+            <div class="mt-1 space-y-1">
+                <a href="/user/perfil" 
+                   class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-md group transition-colors duration-150
+                          <%= (typeof activeLink !== 'undefined' && activeLink === 'perfil') 
+                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' %>">
+                    <i class="fa-solid fa-user-circle fa-fw mr-3 flex-shrink-0 w-5 h-5 sidebar-icon"></i>
+                    <span class="sidebar-text">Perfil</span>
+                </a>
+                <a href="/notificacoes" 
+                   class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-md group transition-colors duration-150
+                          <%= (typeof activeLink !== 'undefined' && activeLink === 'notificacoes') 
+                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' %>">
+                    <i class="fa-solid fa-bell fa-fw mr-3 flex-shrink-0 w-5 h-5 sidebar-icon"></i>
+                    <span class="sidebar-text">Notificações</span>
+                </a>
+                <a href="/user/configuracoes" 
+                   class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-md group transition-colors duration-150
+                          <%= (typeof activeLink !== 'undefined' && activeLink === 'configuracoes') 
+                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' %>">
+                    <i class="fa-solid fa-gear fa-fw mr-3 flex-shrink-0 w-5 h-5 sidebar-icon"></i>
+                    <span class="sidebar-text">Configurações</span>
+                </a>
             </div>
         </div>
     </nav>
 
-    <div class="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700"> 
-        <a href="/user/perfil" class="flex items-center group w-full">
-            <% if (usuario && usuario.foto_perfil) { %>
-                <img class="h-9 w-9 rounded-full object-cover flex-shrink-0" src="/uploads/images/<%= usuario.foto_perfil %>" alt="Foto do usuário">
+    <!-- Footer com Avatar do Usuário -->
+    <div class="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
+        <a href="/user/perfil" class="sidebar-footer flex items-center group w-full hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg p-2 -m-2 transition-colors duration-150">
+            <!-- Avatar -->
+            <% if (typeof usuario !== 'undefined' && usuario && usuario.foto_perfil) { %>
+                <img src="/uploads/images/<%= usuario.foto_perfil %>" 
+                     alt="<%= usuario.nome %>" 
+                     class="sidebar-avatar h-10 w-10 rounded-full flex-shrink-0">
             <% } else { %>
-                <span class="h-9 w-9 rounded-full bg-teal-100 dark:bg-teal-700 text-teal-700 dark:text-teal-100 flex items-center justify-center font-semibold flex-shrink-0">
-                    <%= (usuario && usuario.nome) ? usuario.nome.charAt(0).toUpperCase() : 'U' %>
+                <span class="sidebar-avatar h-10 w-10 rounded-full bg-teal-100 dark:bg-teal-700 text-teal-700 dark:text-teal-100 flex items-center justify-center font-semibold flex-shrink-0 text-sm">
+                    <%= (typeof usuario !== 'undefined' && usuario && usuario.nome) 
+                        ? usuario.nome.charAt(0).toUpperCase() 
+                        : 'U' %>
                 </span>
             <% } %>
-            <div class="ml-3 min-w-0 flex-1">
+            
+            <!-- Info do Usuário -->
+            <div class="sidebar-user-info ml-3 min-w-0 flex-1 overflow-hidden">
                 <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    <%= (usuario && usuario.nome) ? usuario.nome : 'Usuário' %>
+                    <%= (typeof usuario !== 'undefined' && usuario && usuario.nome) 
+                        ? usuario.nome 
+                        : 'Usuário' %>
                 </p>
                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">
-                    <%= (usuario && usuario.email) ? usuario.email : 'admin@edu.com' %>
+                    <%= (typeof usuario !== 'undefined' && usuario && usuario.email) 
+                        ? usuario.email 
+                        : 'usuario@email.com' %>
                 </p>
             </div>
         </a>

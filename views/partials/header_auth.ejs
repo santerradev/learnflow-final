@@ -1,25 +1,66 @@
 <!-- file: views/partials/header_auth.ejs -->
 
 <!DOCTYPE html>
-<html lang="pt-br" class="">
+<html lang="pt-BR" class="">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' - ' : '' %>LearnFlow</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { darkMode: 'class' }
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            '50': '#f0fdfa',
+                            '100': '#ccfbf1',
+                            '200': '#99f6e4',
+                            '300': '#5eead4',
+                            '400': '#2dd4bf',
+                            '500': '#14b8a6',
+                            '600': '#0d9488',
+                            '700': '#0f766e',
+                            '800': '#115e59',
+                            '900': '#134e4a',
+                            '950': '#042f2e',
+                        }
+                    }
+                }
+            }
+        }
     </script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="/js/main.js" defer></script>
-    <title>LearnFlow</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- CSS Customizado -->
+    <link rel="stylesheet" href="/css/animations.css">
+    
+    <!-- Favicon (opcional) -->
+    <link rel="icon" type="image/png" href="/images/logo.png">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-    <div class="flex flex-col items-center justify-center min-h-screen py-10 px-4">
-        
-        <a href="/" class="flex items-center mb-6">
-            <span class="bg-teal-600 dark:bg-teal-500 text-white rounded-md px-3 py-2 text-2xl font-bold mr-2">L</span>
-            <span class="text-3xl font-bold text-gray-900 dark:text-white">LearnFlow</span>
-        </a>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex items-center justify-center p-4">
 
-        <div class="w-full max-w-md bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
+    <!-- Container Principal - Largura dinâmica baseada na página -->
+    <div class="w-full <%= typeof formWidth !== 'undefined' ? formWidth : 'max-w-md' %>">
+        
+        <!-- Logo e Nome -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="flex items-center justify-center mb-3 sm:mb-4">
+                <!-- Logo (troca com dark mode) -->
+                <img src="/images/logo.png" 
+                     alt="LearnFlow Logo" 
+                     class="h-12 w-12 sm:h-14 sm:w-14 dark:hidden">
+                <img src="/images/logo1.png" 
+                     alt="LearnFlow Logo" 
+                     class="h-12 w-12 sm:h-14 sm:w-14 hidden dark:block">
+                <span class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">LearnFlow</span>
+            </div>
+        </div>
+
+        <!-- Card do Formulário -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-200 dark:border-gray-700">
