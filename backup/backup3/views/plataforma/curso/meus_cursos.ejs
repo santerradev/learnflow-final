@@ -1,0 +1,280 @@
+<%- include('../../partials/head', { title: 'Meus Cursos' }) %>
+
+<body class="bg-gray-50 dark:bg-gray-900">
+    <%- include('../../partials/navbar/navbar_app') %>
+    
+    <% if (typeof user !== 'undefined' && user) { %>
+        <% if (user.tipo === 'ALUNO') { %>
+            <%- include('../../partials/sidebar/sidebar_aluno') %>
+        <% } else if (user.tipo === 'PROFESSOR') { %>
+            <%- include('../../partials/sidebar/sidebar_professor') %>
+        <% } else if (user.tipo === 'ADMINISTRADOR') { %>
+            <%- include('../../partials/sidebar/sidebar_admin') %>
+        <% } %>
+    <% } %>
+
+    <!-- Dynamic Progress Styles -->
+    <style>
+        <% if (typeof cursos !== 'undefined' && cursos && cursos.length > 0) { %>
+            <% cursos.forEach((curso, index) => { %>
+                .progress-bar-<%= index %> {
+                    width: <%= curso.progresso || 0 %>%;
+                }
+            <% }); %>
+        <% } %>
+    </style>
+
+    <main id="mainContent" class="lg:ml-64 pt-20 min-h-screen transition-all duration-300">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8 fade-in">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                        Meus Cursos
+                    </h1>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        <% if (typeof user !== 'undefined' && user && user.tipo === 'PROFESSOR') { %>
+                            Gerencie todos os cursos que você criou
+                        <% } else { %>
+                            Cursos em que você está inscrito
+                        <% } %>
+                    </p>
+                </div>
+
+                <% if (typeof user !== 'undefined' && user && (user.tipo === 'PROFESSOR' || user.tipo === 'ADMINISTRADOR')) { %>
+                    <button 
+                        onclick="window.location.href='/cursos'"
+                        class="btn-primary text-white px-6 py-3 rounded-lg font-medium inline-flex items-center"
+                    >
+                        <i class="fas fa-plus mr-2"></i>
+                        Novo Curso
+                    </button>
+                <% } %>
+            </div>
+
+            <%- include('../../partials/alerts') %>
+
+            <!-- Filtros -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6 fade-in">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input 
+                            type="text" 
+                            id="searchCursos"
+                            placeholder="Buscar cursos..."
+                            onkeyup="filterCursos()"
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        >
+                    </div>
+                    <select 
+                        id="filterStatus"
+                        onchange="filterCursos()"
+                        class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                        <option value="all">Todos os Status</option>
+                        <option value="em-andamento">Em Andamento</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Courses List -->
+            <div class="space-y-4" id="cursosList">
+                <% if (typeof cursos !== 'undefined' && cursos && cursos.length > 0) { %>
+                    <% cursos.forEach((curso, index) => { %>
+                        <div class="curso-item bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition fade-in" 
+                             data-titulo="<%= curso.titulo.toLowerCase() %>"
+                             data-materia="<%= (curso.materia || '').toLowerCase() %>">
+                            <div class="p-6">
+                                <div class="flex flex-col lg:flex-row gap-6">
+                                    <!-- Image -->
+                                    <div class="w-full lg:w-48 h-32 flex-shrink-0 bg-gradient-to-br from-teal-400 to-teal-600 rounded-lg overflow-hidden">
+                                        <% if (curso.imagem) { %>
+                                            <img src="<%= curso.imagem %>" alt="<%= curso.titulo %>" class="w-full h-full object-cover">
+                                        <% } else { %>
+                                            <div class="w-full h-full flex items-center justify-center">
+                                                <i class="fas fa-book text-white text-4xl opacity-30"></i>
+                                            </div>
+                                        <% } %>
+                                    </div>
+
+                                    <!-- Info -->
+                                    <div class="flex-1">
+                                        <div class="flex items-start justify-between mb-3">
+                                            <div>
+                                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                                                    <%= curso.titulo %>
+                                                </h3>
+                                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                    <%= curso.materia || 'Sem matéria' %>
+                                                </p>
+                                            </div>
+                                            <% if (curso.senhaAcesso) { %>
+                                                <span class="bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-400 text-xs px-2 py-1 rounded-full">
+                                                    <i class="fas fa-lock mr-1"></i> Protegido
+                                                </span>
+                                            <% } %>
+                                        </div>
+
+                                        <div class="flex items-center gap-4 mb-4 text-sm text-gray-600 dark:text-gray-400">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-play-circle mr-2"></i>
+                                                <%= curso._count?.aulas || 0 %> aulas
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fas fa-clipboard-list mr-2"></i>
+                                                <%= curso._count?.atividades || 0 %> atividades
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fas fa-users mr-2"></i>
+                                                <%= curso._count?.inscricoes || 0 %> alunos
+                                            </div>
+                                        </div>
+
+                                        <!-- Progress Bar (para alunos) -->
+                                        <% if (typeof user !== 'undefined' && user && user.tipo === 'ALUNO') { %>
+                                            <div class="mb-4">
+                                                <div class="flex items-center justify-between text-sm mb-1">
+                                                    <span class="text-gray-600 dark:text-gray-400">Progresso</span>
+                                                    <span class="text-teal-600 font-medium"><%= curso.progresso || 0 %>%</span>
+                                                </div>
+                                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                                    <div class="progress-bar-<%= index %> bg-teal-600 h-2 rounded-full transition-all"></div>
+                                                </div>
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Actions -->
+                                        <div class="flex flex-wrap gap-2">
+                                            <a 
+                                                href="/cursos/<%= curso.id %>" 
+                                                class="btn-primary text-white px-4 py-2 rounded-lg font-medium inline-flex items-center"
+                                            >
+                                                <i class="fas fa-eye mr-2"></i>
+                                                Acessar Curso
+                                            </a>
+                                            <% if (typeof user !== 'undefined' && user && (user.tipo === 'PROFESSOR' || user.tipo === 'ADMINISTRADOR')) { %>
+                                                <a 
+                                                    href="/cursos/<%= curso.id %>/editar" 
+                                                    class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg font-medium inline-flex items-center hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+                                                >
+                                                    <i class="fas fa-edit mr-2"></i>
+                                                    Editar
+                                                </a>
+                                                <button 
+                                                    type="button"
+                                                    class="btn-excluir-curso bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-2 rounded-lg font-medium inline-flex items-center hover:bg-red-100 dark:hover:bg-red-900/30 transition"
+                                                    data-curso-id="<%= curso.id %>"
+                                                >
+                                                    <i class="fas fa-trash mr-2"></i>
+                                                    Excluir
+                                                </button>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="text-center py-16">
+                        <i class="fas fa-graduation-cap text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                            Nenhum curso encontrado
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-6">
+                            <% if (typeof user !== 'undefined' && user && user.tipo === 'PROFESSOR') { %>
+                                Você ainda não criou nenhum curso
+                            <% } else { %>
+                                Você ainda não está inscrito em nenhum curso
+                            <% } %>
+                        </p>
+                        <a 
+                            href="/cursos" 
+                            class="btn-primary text-white px-6 py-3 rounded-lg font-medium inline-flex items-center"
+                        >
+                            <i class="fas fa-<%= user && user.tipo === 'PROFESSOR' ? 'plus' : 'search' %> mr-2"></i>
+                            <%= user && user.tipo === 'PROFESSOR' ? 'Criar Curso' : 'Buscar Cursos' %>
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../../partials/footer/footer_app') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listeners para botões de excluir
+            const btnsExcluir = document.querySelectorAll('.btn-excluir-curso');
+            btnsExcluir.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const cursoId = this.getAttribute('data-curso-id');
+                    confirmarExcluirCurso(cursoId);
+                });
+            });
+        });
+
+        function filterCursos() {
+            const searchTerm = document.getElementById('searchCursos').value.toLowerCase();
+            const statusFilter = document.getElementById('filterStatus').value;
+            const items = document.querySelectorAll('.curso-item');
+            
+            items.forEach(function(item) {
+                const titulo = item.getAttribute('data-titulo');
+                const materia = item.getAttribute('data-materia');
+                const matchesSearch = titulo.includes(searchTerm) || materia.includes(searchTerm);
+                
+                // Aqui você pode adicionar lógica para filtrar por status
+                const matchesStatus = statusFilter === 'all'; // Simplificado
+                
+                if (matchesSearch && matchesStatus) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function confirmarExcluirCurso(cursoId) {
+            showConfirmModal({
+                title: 'Excluir Curso',
+                message: 'Tem certeza que deseja excluir este curso? Esta ação não pode ser desfeita e todos os dados relacionados serão perdidos.',
+                type: 'danger',
+                confirmText: 'Sim, excluir',
+                onConfirm: function() { excluirCurso(cursoId); }
+            });
+        }
+
+        async function excluirCurso(cursoId) {
+            try {
+                showLoading('Excluindo curso...');
+                
+                const response = await fetch('/cursos/' + cursoId, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('Curso excluído com sucesso!', 'success');
+                    setTimeout(function() { 
+                        location.reload(); 
+                    }, 1000);
+                } else {
+                    showAlert(result.error || 'Erro ao excluir curso', 'error');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('Erro ao excluir curso. Tente novamente.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+
+<%- include('../../partials/scripts') %>

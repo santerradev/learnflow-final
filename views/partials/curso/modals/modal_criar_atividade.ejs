@@ -1,0 +1,306 @@
+<!-- file: views/partials/curso/modals/modal_criar_atividade.ejs -->
+
+<div id="modal-criar-atividade" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Nova Atividade</h2>
+                <button type="button" onclick="toggleModal('modal-criar-atividade', false)" 
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Formulário -->
+            <form id="form-criar-atividade" class="space-y-4">
+                <div>
+                    <label for="atividade-titulo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Título da Atividade *
+                    </label>
+                    <input type="text" 
+                           id="atividade-titulo" 
+                           name="titulo"
+                           required
+                           placeholder="Ex: Quiz - Fundamentos de JavaScript"
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                
+                <div>
+                    <label for="atividade-descricao" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Descrição (opcional)
+                    </label>
+                    <textarea id="atividade-descricao" 
+                              name="descricao"
+                              rows="2"
+                              placeholder="Instruções para os alunos..."
+                              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="atividade-lista" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Lista (opcional)
+                        </label>
+                        <select id="atividade-lista" 
+                                name="lista_id"
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            <option value="">Sem lista</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="atividade-prazo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Data de Entrega
+                        </label>
+                        <input type="datetime-local" 
+                               id="atividade-prazo" 
+                               name="data_prazo"
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                </div>
+                
+                <!-- Seção de Perguntas -->
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Perguntas</h3>
+                        <button type="button" 
+                                onclick="adicionarPergunta()"
+                                class="flex items-center gap-2 px-3 py-1.5 text-sm bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 rounded-lg hover:bg-teal-200 dark:hover:bg-teal-800 transition">
+                            <i class="fa-solid fa-plus"></i> Adicionar Pergunta
+                        </button>
+                    </div>
+                    
+                    <div id="perguntas-container" class="space-y-4">
+                        <!-- Perguntas serão adicionadas aqui -->
+                    </div>
+                    
+                    <p id="msg-sem-perguntas" class="text-center text-gray-500 dark:text-gray-400 py-4">
+                        Clique em "Adicionar Pergunta" para criar perguntas do quiz.
+                    </p>
+                </div>
+                
+                <!-- Botões -->
+                <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" 
+                            onclick="toggleModal('modal-criar-atividade', false)"
+                            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            id="btn-criar-atividade"
+                            class="px-4 py-2 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white rounded-lg transition">
+                        Criar Atividade
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var contadorPerguntas = 0;
+
+    // Carregar listas
+    async function carregarListasParaAtividade() {
+        try {
+            var res = await fetch('/cursos/' + cursoId + '/listas');
+            var listas = await res.json();
+            
+            var select = document.getElementById('atividade-lista');
+            if (select) {
+                select.innerHTML = '<option value="">Sem lista</option>';
+                
+                listas.forEach(function(lista) {
+                    var option = document.createElement('option');
+                    option.value = lista.id;
+                    option.textContent = lista.titulo;
+                    select.appendChild(option);
+                });
+            }
+        } catch (err) {
+            console.error('Erro ao carregar listas:', err);
+        }
+    }
+
+    // Adicionar pergunta - expor globalmente
+    window.adicionarPergunta = function() {
+        contadorPerguntas++;
+        var container = document.getElementById('perguntas-container');
+        var msgSem = document.getElementById('msg-sem-perguntas');
+        if (msgSem) msgSem.style.display = 'none';
+        
+        var perguntaHtml = 
+            '<div class="pergunta-item bg-gray-50 dark:bg-gray-700 p-4 rounded-lg" data-pergunta="' + contadorPerguntas + '">' +
+                '<div class="flex justify-between items-center mb-3">' +
+                    '<h4 class="font-semibold text-gray-900 dark:text-white">Pergunta ' + contadorPerguntas + '</h4>' +
+                    '<button type="button" onclick="removerPergunta(' + contadorPerguntas + ')" class="text-red-500 hover:text-red-700">' +
+                        '<i class="fa-solid fa-trash"></i>' +
+                    '</button>' +
+                '</div>' +
+                '<div class="space-y-3">' +
+                    '<div>' +
+                        '<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Enunciado *</label>' +
+                        '<textarea class="pergunta-enunciado w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500" rows="2" required placeholder="Digite a pergunta..."></textarea>' +
+                    '</div>' +
+                    '<div>' +
+                        '<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Opções (marque a correta)</label>' +
+                        '<div class="space-y-2">' +
+                            '<div class="flex items-center gap-2">' +
+                                '<input type="radio" name="correta-' + contadorPerguntas + '" value="A" class="pergunta-correta h-4 w-4 text-teal-600">' +
+                                '<span class="text-sm font-medium text-gray-600 dark:text-gray-400 w-6">A)</span>' +
+                                '<input type="text" class="opcao-texto flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-600 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Opção A" data-opcao="A">' +
+                            '</div>' +
+                            '<div class="flex items-center gap-2">' +
+                                '<input type="radio" name="correta-' + contadorPerguntas + '" value="B" class="pergunta-correta h-4 w-4 text-teal-600">' +
+                                '<span class="text-sm font-medium text-gray-600 dark:text-gray-400 w-6">B)</span>' +
+                                '<input type="text" class="opcao-texto flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-600 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Opção B" data-opcao="B">' +
+                            '</div>' +
+                            '<div class="flex items-center gap-2">' +
+                                '<input type="radio" name="correta-' + contadorPerguntas + '" value="C" class="pergunta-correta h-4 w-4 text-teal-600">' +
+                                '<span class="text-sm font-medium text-gray-600 dark:text-gray-400 w-6">C)</span>' +
+                                '<input type="text" class="opcao-texto flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-600 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Opção C" data-opcao="C">' +
+                            '</div>' +
+                            '<div class="flex items-center gap-2">' +
+                                '<input type="radio" name="correta-' + contadorPerguntas + '" value="D" class="pergunta-correta h-4 w-4 text-teal-600">' +
+                                '<span class="text-sm font-medium text-gray-600 dark:text-gray-400 w-6">D)</span>' +
+                                '<input type="text" class="opcao-texto flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-600 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Opção D" data-opcao="D">' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        
+        container.insertAdjacentHTML('beforeend', perguntaHtml);
+    };
+
+    // Remover pergunta - expor globalmente
+    window.removerPergunta = function(num) {
+        var pergunta = document.querySelector('[data-pergunta="' + num + '"]');
+        if (pergunta) {
+            pergunta.remove();
+        }
+        
+        var container = document.getElementById('perguntas-container');
+        var msgSem = document.getElementById('msg-sem-perguntas');
+        if (container && container.children.length === 0 && msgSem) {
+            msgSem.style.display = 'block';
+        }
+    };
+
+    // Coletar dados das perguntas
+    function coletarPerguntas() {
+        var perguntas = [];
+        var items = document.querySelectorAll('.pergunta-item');
+        
+        items.forEach(function(item, index) {
+            var enunciado = item.querySelector('.pergunta-enunciado').value;
+            var corretaInput = item.querySelector('.pergunta-correta:checked');
+            var respostaCorreta = corretaInput ? corretaInput.value : null;
+            
+            var opcoes = [];
+            item.querySelectorAll('.opcao-texto').forEach(function(input) {
+                opcoes.push({
+                    id: input.dataset.opcao,
+                    texto: input.value
+                });
+            });
+            
+            perguntas.push({
+                id: index + 1,
+                enunciado: enunciado,
+                opcoes: opcoes,
+                resposta_correta: respostaCorreta
+            });
+        });
+        
+        return perguntas;
+    }
+
+    // Submit do formulário
+    var form = document.getElementById('form-criar-atividade');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            var perguntas = coletarPerguntas();
+            
+            // Validar perguntas
+            for (var i = 0; i < perguntas.length; i++) {
+                var p = perguntas[i];
+                if (!p.enunciado) {
+                    alert('Preencha o enunciado da pergunta ' + (i + 1));
+                    return;
+                }
+                if (!p.resposta_correta) {
+                    alert('Selecione a resposta correta da pergunta ' + (i + 1));
+                    return;
+                }
+            }
+            
+            var btn = document.getElementById('btn-criar-atividade');
+            var btnTextoOriginal = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando...';
+            
+            var listaId = document.getElementById('atividade-lista').value;
+            var formData = {
+                titulo: document.getElementById('atividade-titulo').value,
+                descricao: document.getElementById('atividade-descricao').value || null,
+                lista_id: listaId ? parseInt(listaId) : null,
+                data_prazo: document.getElementById('atividade-prazo').value || null,
+                conteudo: { perguntas: perguntas }
+            };
+            
+            try {
+                var res = await fetch('/cursos/' + cursoId + '/atividades', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                var data = await res.json();
+                
+                if (res.ok) {
+                    alert('Atividade criada com sucesso!');
+                    toggleModal('modal-criar-atividade', false);
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Erro ao criar atividade.');
+                    btn.disabled = false;
+                    btn.innerHTML = btnTextoOriginal;
+                }
+            } catch (err) {
+                console.error('Erro:', err);
+                alert('Erro ao conectar com o servidor.');
+                btn.disabled = false;
+                btn.innerHTML = btnTextoOriginal;
+            }
+        });
+    }
+
+    // Observar quando o modal abrir
+    var modalAtividade = document.getElementById('modal-criar-atividade');
+    if (modalAtividade) {
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    if (!modalAtividade.classList.contains('hidden')) {
+                        carregarListasParaAtividade();
+                        // Reset do formulário
+                        contadorPerguntas = 0;
+                        var container = document.getElementById('perguntas-container');
+                        if (container) container.innerHTML = '';
+                        var msgSem = document.getElementById('msg-sem-perguntas');
+                        if (msgSem) msgSem.style.display = 'block';
+                        var formAtiv = document.getElementById('form-criar-atividade');
+                        if (formAtiv) formAtiv.reset();
+                    }
+                }
+            });
+        });
+        observer.observe(modalAtividade, { attributes: true });
+    }
+})();
+</script>

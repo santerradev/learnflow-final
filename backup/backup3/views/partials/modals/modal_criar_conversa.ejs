@@ -1,0 +1,185 @@
+<!-- Modal Criar Nova Conversa -->
+<div id="modalCriarConversa" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden fade-in">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Nova Conversa
+            </h3>
+            <button onclick="closeModalCriarConversa()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+            <!-- Search -->
+            <div class="mb-4">
+                <input 
+                    type="text" 
+                    id="searchUsuarios"
+                    placeholder="Buscar usuários..."
+                    class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    onkeyup="filterUsuarios()"
+                >
+            </div>
+
+            <!-- Lista de Usuários -->
+            <div id="listaUsuarios" class="space-y-2">
+                <% if (typeof usuarios !== 'undefined' && usuarios && usuarios.length > 0) { %>
+                    <% usuarios.forEach(usuario => { %>
+                        <label class="usuario-item flex items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition">
+                            <input 
+                                type="checkbox" 
+                                name="usuarios[]" 
+                                value="<%= usuario.id %>"
+                                class="w-4 h-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+                            >
+                            <div class="ml-3 flex items-center flex-1">
+                                <div class="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    <%= usuario.nome.charAt(0).toUpperCase() %>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white usuario-nome">
+                                        <%= usuario.nome %>
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 usuario-email">
+                                        <%= usuario.email %>
+                                    </p>
+                                </div>
+                            </div>
+                        </label>
+                    <% }); %>
+                <% } else { %>
+                    <p class="text-center text-gray-500 dark:text-gray-400 py-8">
+                        Nenhum usuário disponível
+                    </p>
+                <% } %>
+            </div>
+
+            <!-- Contador de selecionados -->
+            <div id="selectedCount" class="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center hidden">
+                <span id="selectedCountNumber">0</span> usuário(s) selecionado(s)
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
+            <button 
+                onclick="closeModalCriarConversa()" 
+                class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium transition"
+            >
+                Cancelar
+            </button>
+            <button 
+                onclick="criarConversa()" 
+                class="px-4 py-2 btn-primary text-white rounded-lg font-medium transition"
+            >
+                Criar Conversa
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModalCriarConversa() {
+        const modal = document.getElementById('modalCriarConversa');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeModalCriarConversa() {
+        const modal = document.getElementById('modalCriarConversa');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        
+        // Limpar seleções
+        const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = false);
+        updateSelectedCount();
+    }
+
+    function filterUsuarios() {
+        const search = document.getElementById('searchUsuarios').value.toLowerCase();
+        const items = document.querySelectorAll('.usuario-item');
+        
+        items.forEach(item => {
+            const nome = item.querySelector('.usuario-nome').textContent.toLowerCase();
+            const email = item.querySelector('.usuario-email').textContent.toLowerCase();
+            
+            if (nome.includes(search) || email.includes(search)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    function updateSelectedCount() {
+        const checkboxes = document.querySelectorAll('#modalCriarConversa input[type="checkbox"]:checked');
+        const count = checkboxes.length;
+        const countEl = document.getElementById('selectedCount');
+        const numberEl = document.getElementById('selectedCountNumber');
+        
+        numberEl.textContent = count;
+        
+        if (count > 0) {
+            countEl.classList.remove('hidden');
+        } else {
+            countEl.classList.add('hidden');
+        }
+    }
+
+    // Adicionar listener para atualizar contador
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('modalCriarConversa');
+        if (modal) {
+            modal.addEventListener('change', function(e) {
+                if (e.target.type === 'checkbox') {
+                    updateSelectedCount();
+                }
+            });
+        }
+    });
+
+    async function criarConversa() {
+        const checkboxes = document.querySelectorAll('#modalCriarConversa input[type="checkbox"]:checked');
+        const usuarioIds = Array.from(checkboxes).map(cb => cb.value);
+        
+        if (usuarioIds.length === 0) {
+            showAlert('Selecione pelo menos um usuário', 'warning');
+            return;
+        }
+
+        try {
+            showLoading('Criando conversa...');
+            
+            const response = await fetch('/chat/conversas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ participantes: usuarioIds })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showAlert('Conversa criada com sucesso!', 'success');
+                closeModalCriarConversa();
+                
+                // Redirecionar para a conversa
+                setTimeout(() => {
+                    window.location.href = `/chat/${data.conversaId}`;
+                }, 1000);
+            } else {
+                showAlert(data.error || 'Erro ao criar conversa', 'error');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showAlert('Erro ao criar conversa', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+</script>

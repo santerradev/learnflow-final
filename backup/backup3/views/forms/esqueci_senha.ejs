@@ -1,0 +1,141 @@
+<%- include('../partials/head', { title: 'Esqueci Minha Senha' }) %>
+
+<body class="bg-gray-50 dark:bg-gray-900">
+    <div class="min-h-screen flex">
+        <!-- Left Side - Teal Background -->
+        <div class="split-screen-left hidden lg:flex lg:w-1/2 bg-gradient-to-br from-teal-500 to-teal-600 text-white p-12 flex-col justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                    <span class="text-teal-600 text-2xl font-bold">L</span>
+                </div>
+                <span class="text-2xl font-bold">LearnFlow</span>
+            </div>
+
+            <!-- Main Content -->
+            <div class="space-y-6">
+                <h1 class="text-5xl font-bold leading-tight">
+                    Recupere o acesso à sua conta
+                </h1>
+                <p class="text-xl text-teal-100">
+                    Não se preocupe! Enviaremos um link de recuperação para seu email cadastrado.
+                </p>
+            </div>
+
+            <!-- Statistics -->
+            <div class="grid grid-cols-3 gap-8">
+                <div>
+                    <div class="text-4xl font-bold mb-1">500+</div>
+                    <div class="text-teal-100">Cursos Ativos</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-1">2.5k</div>
+                    <div class="text-teal-100">Professores</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-1">15k</div>
+                    <div class="text-teal-100">Alunos Ativos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
+            <div class="w-full max-w-md space-y-8 fade-in">
+                <!-- Mobile Logo -->
+                <div class="lg:hidden flex items-center justify-center space-x-3 mb-8">
+                    <div class="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-2xl font-bold">L</span>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-800 dark:text-white">LearnFlow</span>
+                </div>
+
+                <!-- Icon -->
+                <div class="text-center">
+                    <div class="mx-auto w-16 h-16 bg-teal-100 dark:bg-teal-900 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-key text-3xl text-teal-600"></i>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="text-center lg:text-left">
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
+                        Esqueceu sua senha?
+                    </h2>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">
+                        Digite seu email e enviaremos um link de recuperação
+                    </p>
+                </div>
+
+                <!-- Alerts -->
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            <span><%= error %></span>
+                        </div>
+                    </div>
+                <% } %>
+                
+                <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <span><%= success %></span>
+                        </div>
+                    </div>
+                <% } %>
+
+                <!-- Form -->
+                <form action="/esqueci-senha" method="POST" class="space-y-6" onsubmit="return validateForgotPasswordForm()">
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="seu@email.com"
+                            required
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="forgotPasswordButton"
+                        class="w-full btn-primary text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
+                    >
+                        Enviar Link de Recuperação
+                    </button>
+                </form>
+
+                <!-- Back to Login -->
+                <div class="text-center">
+                    <a href="/login" class="text-sm font-medium text-teal-600 hover:text-teal-500 inline-flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Voltar para o login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateForgotPasswordForm() {
+            const email = document.getElementById('email').value;
+            
+            if (!validateEmail(email)) {
+                showAlert('Por favor, insira um email válido', 'error');
+                return false;
+            }
+            
+            showLoading('forgotPasswordButton');
+            return true;
+        }
+    </script>
+
+<%- include('../partials/scripts') %>

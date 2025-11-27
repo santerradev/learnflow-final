@@ -1,0 +1,230 @@
+<!-- file: views/plataforma/curso/aulas.ejs -->
+
+<%- include('../../partials/header_app') %>
+
+<main class="flex-1 overflow-y-auto">
+    <%- include('../../partials/curso/header_curso') %>
+    
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-6">
+        <%- include('../../partials/curso/nav_curso') %>
+        
+<!-- Título e Botões -->
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Aulas</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Videoaulas organizadas por listas</p>
+    </div>
+    <% if (eDonoCurso) { %>
+        <div class="flex gap-2">
+            <button onclick="toggleModal('modal-criar-lista', true)" 
+                    class="flex items-center gap-2 px-4 py-2 border border-teal-600 text-teal-600 dark:border-teal-400 dark:text-teal-400 rounded-lg text-sm font-medium hover:bg-teal-50 dark:hover:bg-teal-900/20 transition">
+                <i class="fa-solid fa-folder-plus"></i> Nova Lista
+            </button>
+            <button onclick="toggleModal('modal-criar-aula', true)" 
+                    class="flex items-center gap-2 px-4 py-2 bg-teal-600 rounded-lg text-sm font-medium text-white hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 transition">
+                <i class="fa-solid fa-plus"></i> Criar Aula
+            </button>
+        </div>
+    <% } %>
+</div>
+        
+        <div class="space-y-6">
+            <!-- Aulas por Lista -->
+            <% if (listas && listas.length > 0) { %>
+                <% listas.forEach(lista => { %>
+                    <% if (lista.aulas && lista.aulas.length > 0) { %>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div class="p-4 flex justify-between items-center cursor-pointer" 
+                                 onclick="toggleLista('lista-<%= lista.id %>')">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-play-circle text-teal-500 text-xl"></i>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white"><%= lista.titulo %></h3>
+                                        <% if (lista.descricao) { %>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400"><%= lista.descricao %></p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2.5 py-0.5 rounded-full">
+                                        <%= lista.aulas.length %> aula(s)
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down text-gray-400 transition-transform" id="chevron-lista-<%= lista.id %>"></i>
+                                </div>
+                            </div>
+                            <div id="lista-<%= lista.id %>" class="border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
+                                <% lista.aulas.forEach(aula => { %>
+                                    <a href="/cursos/<%= curso.id %>/aulas/<%= aula.id %>" 
+                                       class="flex items-center justify-between p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                        <div class="flex items-center gap-4">
+                                            <% if (aulasConcluidasIds.includes(aula.id)) { %>
+                                                <i class="fa-solid fa-check-circle text-green-500"></i>
+                                            <% } else { %>
+                                                <i class="fa-solid fa-play-circle text-gray-400"></i>
+                                            <% } %>
+                                            <div>
+                                                <p class="font-medium text-gray-800 dark:text-gray-200"><%= aula.titulo %></p>
+                                                <% if (aula.data_prazo) { %>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                        Prazo: <%= new Date(aula.data_prazo).toLocaleDateString('pt-BR') %>
+                                                    </p>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <% if (aula.duracao) { %>
+                                            <span class="text-sm text-gray-500 dark:text-gray-400">
+                                                <i class="fa-regular fa-clock mr-1"></i> <%= aula.duracao %> min
+                                            </span>
+                                        <% } %>
+                                    </a>
+                                <% }) %>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }) %>
+            <% } %>
+            
+            <!-- Aulas sem Lista -->
+            <% if (aulasSemLista && aulasSemLista.length > 0) { %>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-play-circle text-gray-400 text-xl"></i>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Outras Aulas</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Aulas não categorizadas</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2.5 py-0.5 rounded-full">
+                            <%= aulasSemLista.length %> aula(s)
+                        </span>
+                    </div>
+                    <div class="border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
+                        <% aulasSemLista.forEach(aula => { %>
+                            <a href="/cursos/<%= curso.id %>/aulas/<%= aula.id %>" 
+                               class="flex items-center justify-between p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                <div class="flex items-center gap-4">
+                                    <% if (aulasConcluidasIds.includes(aula.id)) { %>
+                                        <i class="fa-solid fa-check-circle text-green-500"></i>
+                                    <% } else { %>
+                                        <i class="fa-solid fa-play-circle text-gray-400"></i>
+                                    <% } %>
+                                    <div>
+                                        <p class="font-medium text-gray-800 dark:text-gray-200"><%= aula.titulo %></p>
+                                        <% if (aula.data_prazo) { %>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Prazo: <%= new Date(aula.data_prazo).toLocaleDateString('pt-BR') %>
+                                            </p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <% if (aula.duracao) { %>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                                        <i class="fa-regular fa-clock mr-1"></i> <%= aula.duracao %> min
+                                    </span>
+                                <% } %>
+                            </a>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+            
+            <!-- Estado Vazio -->
+            <% if ((!listas || listas.every(l => !l.aulas || l.aulas.length === 0)) && (!aulasSemLista || aulasSemLista.length === 0)) { %>
+                <div class="bg-white dark:bg-gray-800 p-12 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+                    <i class="fa-solid fa-video text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Nenhuma aula cadastrada</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mt-1">
+                        <% if (eDonoCurso) { %>
+                            Crie a primeira aula do curso clicando no botão acima.
+                        <% } else { %>
+                            O professor ainda não adicionou aulas a este curso.
+                        <% } %>
+                    </p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</main>
+
+<!-- Modal Criar Aula -->
+<% if (eDonoCurso) { %>
+    <%- include('../../partials/curso/modals/modal_criar_aula') %>
+<% } %>
+
+<script>
+function toggleLista(id) {
+    const content = document.getElementById(id);
+    const chevron = document.getElementById('chevron-' + id);
+    content.classList.toggle('hidden');
+    chevron.classList.toggle('rotate-180');
+}
+</script>
+
+<% if (eDonoCurso) { %>
+    <%- include('../../partials/curso/modals/modal_criar_lista') %>
+    <%- include('../../partials/curso/modals/modal_criar_aula') %>
+<% } %>
+
+<script>
+var cursoId = <%= curso.id %>;
+
+// Função para abrir/fechar modais
+function toggleModal(modalId, show) {
+    var modal = document.getElementById(modalId);
+    if (modal) {
+        if (show) {
+            modal.classList.remove('hidden');
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+}
+
+// Função showToast (estava faltando!)
+function showToast(titulo, mensagem, tipo) {
+    // Criar elemento do toast
+    var toast = document.createElement('div');
+    toast.className = 'fixed bottom-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white ' + 
+        (tipo === 'success' ? 'bg-green-500' : tipo === 'error' ? 'bg-red-500' : 'bg-blue-500');
+    
+    toast.innerHTML = '<div class="font-bold">' + titulo + '</div><div class="text-sm">' + mensagem + '</div>';
+    
+    document.body.appendChild(toast);
+    
+    // Remover após 3 segundos
+    setTimeout(function() {
+        toast.remove();
+    }, 3000);
+}
+
+// Toggle de lista (expandir/colapsar)
+function toggleLista(id) {
+    var content = document.getElementById(id);
+    var chevron = document.getElementById('chevron-' + id);
+    if (content) {
+        content.classList.toggle('hidden');
+    }
+    if (chevron) {
+        chevron.classList.toggle('rotate-180');
+    }
+}
+
+// Fechar modal ao clicar fora
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('fixed') && e.target.classList.contains('inset-0')) {
+        e.target.classList.add('hidden');
+    }
+});
+
+// Fechar modal com ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.fixed.inset-0').forEach(function(modal) {
+            modal.classList.add('hidden');
+        });
+    }
+});
+</script>
+
+<%- include('../../partials/footer_app') %>

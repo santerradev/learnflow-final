@@ -1,0 +1,149 @@
+<!-- file: views/plataforma/curso/pessoas.ejs -->
+
+<%- include('../../partials/header_app') %>
+
+<main class="flex-1 overflow-y-auto">
+    <%- include('../../partials/curso/header_curso') %>
+    
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-6">
+        <%- include('../../partials/curso/nav_curso') %>
+        
+        <div class="space-y-6">
+            <!-- Professores -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Professores</h2>
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">
+                        1
+                    </span>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- Professor do Curso -->
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <% if (curso.professor.foto_perfil) { %>
+                                <img class="h-10 w-10 rounded-full object-cover" 
+                                     src="/uploads/images/<%= curso.professor.foto_perfil %>" 
+                                     alt="<%= curso.professor.nome %>">
+                            <% } else { %>
+                                <span class="h-10 w-10 rounded-full bg-teal-100 dark:bg-teal-700 text-teal-700 dark:text-teal-100 flex items-center justify-center font-semibold">
+                                    <%= curso.professor.nome.charAt(0).toUpperCase() %>
+                                </span>
+                            <% } %>
+                            <div>
+                                <p class="font-semibold text-gray-900 dark:text-white"><%= curso.professor.nome %></p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400"><%= curso.professor.email %></p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs font-semibold rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200 px-3 py-1">
+                                Professor
+                            </span>
+                            <a href="mailto:<%= curso.professor.email %>" 
+                               class="text-gray-400 hover:text-teal-600 dark:text-gray-500 dark:hover:text-teal-400" 
+                               title="Enviar email">
+                                <i class="fa-solid fa-envelope text-lg"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alunos -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Alunos</h2>
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">
+                        <%= alunos.length %>
+                    </span>
+                </div>
+                
+                <% if (alunos && alunos.length > 0) { %>
+                    <div class="space-y-4">
+                        <% alunos.forEach(inscricao => { %>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-3">
+                                    <% if (inscricao.aluno.foto_perfil) { %>
+                                        <img class="h-10 w-10 rounded-full object-cover" 
+                                             src="/uploads/images/<%= inscricao.aluno.foto_perfil %>" 
+                                             alt="<%= inscricao.aluno.nome %>">
+                                    <% } else { %>
+                                        <span class="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center font-semibold">
+                                            <%= inscricao.aluno.nome.charAt(0).toUpperCase() %>
+                                        </span>
+                                    <% } %>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white"><%= inscricao.aluno.nome %></p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400"><%= inscricao.aluno.email %></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="text-xs font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-3 py-1">
+                                        Aluno
+                                    </span>
+                                    <a href="mailto:<%= inscricao.aluno.email %>" 
+                                       class="text-gray-400 hover:text-teal-600 dark:text-gray-500 dark:hover:text-teal-400" 
+                                       title="Enviar email">
+                                        <i class="fa-solid fa-envelope text-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-8">
+                        <i class="fa-solid fa-user-group text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                        <p class="text-gray-500 dark:text-gray-400">Nenhum aluno inscrito ainda.</p>
+                    </div>
+                <% } %>
+            </div>
+            
+            <!-- Professores Inscritos (se houver) -->
+            <% if (professoresInscritos && professoresInscritos.length > 0) { %>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Outros Professores</h2>
+                        <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">
+                            <%= professoresInscritos.length %>
+                        </span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <% professoresInscritos.forEach(inscricao => { %>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-3">
+                                    <% if (inscricao.aluno.foto_perfil) { %>
+                                        <img class="h-10 w-10 rounded-full object-cover" 
+                                             src="/uploads/images/<%= inscricao.aluno.foto_perfil %>" 
+                                             alt="<%= inscricao.aluno.nome %>">
+                                    <% } else { %>
+                                        <span class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-700 text-blue-700 dark:text-blue-100 flex items-center justify-center font-semibold">
+                                            <%= inscricao.aluno.nome.charAt(0).toUpperCase() %>
+                                        </span>
+                                    <% } %>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white"><%= inscricao.aluno.nome %></p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400"><%= inscricao.aluno.email %></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-3 py-1">
+                                        Professor
+                                    </span>
+                                    <a href="mailto:<%= inscricao.aluno.email %>" 
+                                       class="text-gray-400 hover:text-teal-600 dark:text-gray-500 dark:hover:text-teal-400" 
+                                       title="Enviar email">
+                                        <i class="fa-solid fa-envelope text-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</main>
+
+<%- include('../../partials/footer_app') %>

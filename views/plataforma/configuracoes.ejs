@@ -1,0 +1,649 @@
+<!-- file: views/plataforma/configuracoes.ejs -->
+
+<%- include('../partials/header_app') %>
+
+<main class="flex-1 overflow-y-auto">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8">
+        
+        <!-- Cabeçalho da Página -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Configurações</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Gerencie suas preferências e configurações de conta</p>
+        </div>
+        
+        <!-- Navegação por Tabs -->
+        <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+            <nav class="flex gap-4 -mb-px">
+                <button onclick="showTab('conta')" 
+                        id="tab-conta"
+                        class="tab-btn py-3 px-1 border-b-2 border-teal-500 text-teal-600 dark:text-teal-400 font-medium text-sm">
+                    <i class="fa-solid fa-user mr-2"></i> Conta
+                </button>
+                <button onclick="showTab('aparencia')" 
+                        id="tab-aparencia"
+                        class="tab-btn py-3 px-1 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-medium text-sm">
+                    <i class="fa-solid fa-palette mr-2"></i> Aparência
+                </button>
+                <button onclick="showTab('notificacoes')" 
+                        id="tab-notificacoes"
+                        class="tab-btn py-3 px-1 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-medium text-sm">
+                    <i class="fa-solid fa-bell mr-2"></i> Notificações
+                </button>
+                <button onclick="showTab('seguranca')" 
+                        id="tab-seguranca"
+                        class="tab-btn py-3 px-1 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-medium text-sm">
+                    <i class="fa-solid fa-shield-halved mr-2"></i> Segurança
+                </button>
+            </nav>
+        </div>
+        
+        <!-- Conteúdo das Tabs -->
+        <div class="space-y-6">
+            
+            <!-- Tab: Conta -->
+            <div id="content-conta" class="tab-content">
+                
+                <!-- Informações da Conta -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Informações da Conta
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Nome</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400"><%= usuario.nome %></p>
+                            </div>
+                            <a href="/user/perfil" class="text-teal-600 hover:text-teal-700 dark:text-teal-400 text-sm font-medium">
+                                Editar
+                            </a>
+                        </div>
+                        
+                        <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">E-mail</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400"><%= usuario.email %></p>
+                            </div>
+                            <a href="/user/perfil" class="text-teal-600 hover:text-teal-700 dark:text-teal-400 text-sm font-medium">
+                                Editar
+                            </a>
+                        </div>
+                        
+                        <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Tipo de Conta</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 capitalize"><%= usuario.tipo %></p>
+                            </div>
+                            <span class="text-gray-400 text-sm">Não editável</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between py-3">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Instituição</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    <%= usuario.instituicao === 'IFSUL_Gravatai' ? 'IFSUL - Gravataí' : 'Outra' %>
+                                </p>
+                            </div>
+                            <span class="text-gray-400 text-sm">Não editável</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Zona de Perigo -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-red-200 dark:border-red-900 p-6">
+                    <h3 class="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
+                        <i class="fa-solid fa-exclamation-triangle mr-2"></i> Zona de Perigo
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Desativar Conta</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Sua conta será desativada temporariamente. Você poderá reativá-la entrando em contato com o suporte.
+                                </p>
+                            </div>
+                            <button type="button" 
+                                    onclick="confirmarDesativarConta()"
+                                    class="px-4 py-2 border border-red-300 text-red-600 dark:border-red-700 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium transition">
+                                Desativar
+                            </button>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-white">Excluir Conta</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        Esta ação é irreversível. Todos os seus dados serão permanentemente excluídos.
+                                    </p>
+                                </div>
+                                <button type="button" 
+                                        onclick="confirmarExcluirConta()"
+                                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium transition">
+                                    Excluir Conta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab: Aparência -->
+            <div id="content-aparencia" class="tab-content hidden">
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Tema da Interface
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Tema Claro -->
+                        <button onclick="setTheme('light')" 
+                                id="theme-light"
+                                class="theme-option p-4 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-teal-500 transition group">
+                            <div class="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                                <i class="fa-solid fa-sun text-3xl text-yellow-500"></i>
+                            </div>
+                            <p class="font-medium text-gray-900 dark:text-white">Claro</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Tema com fundo claro</p>
+                        </button>
+                        
+                        <!-- Tema Escuro -->
+                        <button onclick="setTheme('dark')" 
+                                id="theme-dark"
+                                class="theme-option p-4 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-teal-500 transition group">
+                            <div class="w-full h-24 bg-gray-800 rounded-lg mb-3 flex items-center justify-center">
+                                <i class="fa-solid fa-moon text-3xl text-blue-400"></i>
+                            </div>
+                            <p class="font-medium text-gray-900 dark:text-white">Escuro</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Tema com fundo escuro</p>
+                        </button>
+                        
+                        <!-- Tema Sistema -->
+                        <button onclick="setTheme('system')" 
+                                id="theme-system"
+                                class="theme-option p-4 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-teal-500 transition group">
+                            <div class="w-full h-24 bg-gradient-to-r from-gray-100 to-gray-800 rounded-lg mb-3 flex items-center justify-center">
+                                <i class="fa-solid fa-desktop text-3xl text-gray-500"></i>
+                            </div>
+                            <p class="font-medium text-gray-900 dark:text-white">Sistema</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Seguir preferência do sistema</p>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Outras preferências de aparência -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Preferências de Exibição
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Sidebar Compacta</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Mostrar apenas ícones na barra lateral</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sidebar-compact" class="sr-only peer" onchange="toggleSidebarCompact()">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-white">Animações</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Habilitar animações e transições</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="toggle-animacoes" class="sr-only peer" checked onchange="toggleAnimacoes()">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab: Notificações -->
+            <div id="content-notificacoes" class="tab-content hidden">
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Preferências de Notificação
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Novas Aulas</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Receber notificação quando uma nova aula for publicada</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked onchange="salvarPreferenciasNotificacao()">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Novas Atividades</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Receber notificação quando uma nova atividade for publicada</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked onchange="salvarPreferenciasNotificacao()">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Lembretes de Prazo</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Receber lembretes sobre prazos de atividades</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked onchange="salvarPreferenciasNotificacao()">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Comentários no Mural</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Receber notificação quando alguém comentar em suas publicações</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked onchange="salvarPreferenciasNotificacao()">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between py-3">
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">E-mail de Resumo Semanal</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Receber um resumo semanal por e-mail</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" onchange="salvarPreferenciasNotificacao()">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gerenciar Notificações -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                            Gerenciar Notificações
+                        </h3>
+                        <a href="/notificacoes" class="text-teal-600 hover:text-teal-700 dark:text-teal-400 text-sm font-medium">
+                            Ver todas <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <button onclick="marcarTodasComoLidas()" 
+                            class="w-full py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition font-medium">
+                        <i class="fa-solid fa-check-double mr-2"></i> Marcar todas como lidas
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tab: Segurança -->
+            <div id="content-seguranca" class="tab-content hidden">
+                
+                <!-- Alterar Senha -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Alterar Senha
+                    </h3>
+                    
+                    <form id="form-senha" class="space-y-4">
+                        <div>
+                            <label for="senha-atual" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Senha Atual
+                            </label>
+                            <div class="relative">
+                                <input type="password" 
+                                       id="senha-atual" 
+                                       name="senha_atual"
+                                       required
+                                       class="w-full px-4 py-3 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                <button type="button" onclick="toggleSenha('senha-atual')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    <i class="fa-solid fa-eye" id="icon-senha-atual"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="nova-senha" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Nova Senha
+                            </label>
+                            <div class="relative">
+                                <input type="password" 
+                                       id="nova-senha" 
+                                       name="nova_senha"
+                                       required
+                                       minlength="8"
+                                       class="w-full px-4 py-3 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                <button type="button" onclick="toggleSenha('nova-senha')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    <i class="fa-solid fa-eye" id="icon-nova-senha"></i>
+                                </button>
+                            </div>
+                            <div id="requisitos-senha" class="mt-2 text-xs space-y-1">
+                                <p id="req-tamanho" class="text-gray-500"><i class="fa-solid fa-circle mr-1"></i> Mínimo 8 caracteres</p>
+                                <p id="req-maiuscula" class="text-gray-500"><i class="fa-solid fa-circle mr-1"></i> Uma letra maiúscula</p>
+                                <p id="req-numero" class="text-gray-500"><i class="fa-solid fa-circle mr-1"></i> Um número</p>
+                                <p id="req-simbolo" class="text-gray-500"><i class="fa-solid fa-circle mr-1"></i> Um símbolo (@#$%&*)</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="confirmar-senha" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Confirmar Nova Senha
+                            </label>
+                            <div class="relative">
+                                <input type="password" 
+                                       id="confirmar-senha" 
+                                       name="confirmar_senha"
+                                       required
+                                       class="w-full px-4 py-3 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                <button type="button" onclick="toggleSenha('confirmar-senha')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    <i class="fa-solid fa-eye" id="icon-confirmar-senha"></i>
+                                </button>
+                            </div>
+                            <p id="msg-senhas-match" class="text-xs mt-1 hidden"></p>
+                        </div>
+                        
+                        <div class="pt-4">
+                            <button type="submit" 
+                                    id="btn-alterar-senha"
+                                    class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium transition">
+                                <i class="fa-solid fa-key mr-2"></i> Alterar Senha
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Sessões Ativas -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Sessão Atual
+                    </h3>
+                    
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-teal-100 dark:bg-teal-900 rounded-full flex items-center justify-center">
+                                <i class="fa-solid fa-desktop text-teal-600 dark:text-teal-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">Este dispositivo</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Sessão ativa agora</p>
+                            </div>
+                        </div>
+                        <span class="flex items-center text-green-600 dark:text-green-400 text-sm">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            Ativo
+                        </span>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <form action="/auth/logout" method="POST">
+                            <button type="submit" 
+                                    class="w-full py-3 border border-red-300 text-red-600 dark:border-red-700 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 font-medium transition">
+                                <i class="fa-solid fa-right-from-bracket mr-2"></i> Encerrar Sessão
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</main>
+
+<script>
+// Mostrar tab selecionada
+function showTab(tabName) {
+    // Esconder todos os conteúdos
+    document.querySelectorAll('.tab-content').forEach(function(content) {
+        content.classList.add('hidden');
+    });
+    
+    // Remover estilo ativo de todas as tabs
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.classList.remove('border-teal-500', 'text-teal-600', 'dark:text-teal-400');
+        btn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+    });
+    
+    // Mostrar conteúdo selecionado
+    document.getElementById('content-' + tabName).classList.remove('hidden');
+    
+    // Ativar tab selecionada
+    var tabBtn = document.getElementById('tab-' + tabName);
+    tabBtn.classList.add('border-teal-500', 'text-teal-600', 'dark:text-teal-400');
+    tabBtn.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+}
+
+// Toggle visibilidade da senha
+function toggleSenha(inputId) {
+    var input = document.getElementById(inputId);
+    var icon = document.getElementById('icon-' + inputId);
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+// Validar requisitos da senha
+document.getElementById('nova-senha').addEventListener('input', function() {
+    var senha = this.value;
+    
+    var reqTamanho = document.getElementById('req-tamanho');
+    var reqMaiuscula = document.getElementById('req-maiuscula');
+    var reqNumero = document.getElementById('req-numero');
+    var reqSimbolo = document.getElementById('req-simbolo');
+    
+    // Tamanho
+    if (senha.length >= 8) {
+        reqTamanho.classList.remove('text-gray-500');
+        reqTamanho.classList.add('text-green-500');
+        reqTamanho.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Mínimo 8 caracteres';
+    } else {
+        reqTamanho.classList.add('text-gray-500');
+        reqTamanho.classList.remove('text-green-500');
+        reqTamanho.innerHTML = '<i class="fa-solid fa-circle mr-1"></i> Mínimo 8 caracteres';
+    }
+    
+    // Maiúscula
+    if (/[A-Z]/.test(senha)) {
+        reqMaiuscula.classList.remove('text-gray-500');
+        reqMaiuscula.classList.add('text-green-500');
+        reqMaiuscula.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Uma letra maiúscula';
+    } else {
+        reqMaiuscula.classList.add('text-gray-500');
+        reqMaiuscula.classList.remove('text-green-500');
+        reqMaiuscula.innerHTML = '<i class="fa-solid fa-circle mr-1"></i> Uma letra maiúscula';
+    }
+    
+    // Número
+    if (/[0-9]/.test(senha)) {
+        reqNumero.classList.remove('text-gray-500');
+        reqNumero.classList.add('text-green-500');
+        reqNumero.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Um número';
+    } else {
+        reqNumero.classList.add('text-gray-500');
+        reqNumero.classList.remove('text-green-500');
+        reqNumero.innerHTML = '<i class="fa-solid fa-circle mr-1"></i> Um número';
+    }
+    
+    // Símbolo
+    if (/[@#$%&*!?]/.test(senha)) {
+        reqSimbolo.classList.remove('text-gray-500');
+        reqSimbolo.classList.add('text-green-500');
+        reqSimbolo.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Um símbolo (@#$%&*)';
+    } else {
+        reqSimbolo.classList.add('text-gray-500');
+        reqSimbolo.classList.remove('text-green-500');
+        reqSimbolo.innerHTML = '<i class="fa-solid fa-circle mr-1"></i> Um símbolo (@#$%&*)';
+    }
+});
+
+// Verificar se senhas coincidem
+document.getElementById('confirmar-senha').addEventListener('input', function() {
+    var novaSenha = document.getElementById('nova-senha').value;
+    var confirmar = this.value;
+    var msg = document.getElementById('msg-senhas-match');
+    
+    if (confirmar.length > 0) {
+        msg.classList.remove('hidden');
+        if (novaSenha === confirmar) {
+            msg.textContent = 'As senhas coincidem';
+            msg.classList.remove('text-red-500');
+            msg.classList.add('text-green-500');
+        } else {
+            msg.textContent = 'As senhas não coincidem';
+            msg.classList.remove('text-green-500');
+            msg.classList.add('text-red-500');
+        }
+    } else {
+        msg.classList.add('hidden');
+    }
+});
+
+// Submit do formulário de senha
+document.getElementById('form-senha').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    var novaSenha = document.getElementById('nova-senha').value;
+    var confirmar = document.getElementById('confirmar-senha').value;
+    
+    // Validar senhas
+    if (novaSenha !== confirmar) {
+        alert('As senhas não coincidem.');
+        return;
+    }
+    
+    // Validar requisitos
+    var regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%&*!?]).{8,}$/;
+    if (!regex.test(novaSenha)) {
+        alert('A senha não atende aos requisitos mínimos.');
+        return;
+    }
+    
+    var btn = document.getElementById('btn-alterar-senha');
+    var btnTexto = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Alterando...';
+    
+    try {
+        var res = await fetch('/user/alterar-senha', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                senha_atual: document.getElementById('senha-atual').value,
+                nova_senha: novaSenha
+            })
+        });
+        
+        var data = await res.json();
+        
+        if (res.ok) {
+            alert('Senha alterada com sucesso!');
+            this.reset();
+        } else {
+            alert(data.message || 'Erro ao alterar senha.');
+        }
+    } catch (err) {
+        console.error('Erro:', err);
+        alert('Erro ao conectar com o servidor.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = btnTexto;
+    }
+});
+
+// Tema
+function setTheme(theme) {
+    // Remover seleção anterior
+    document.querySelectorAll('.theme-option').forEach(function(opt) {
+        opt.classList.remove('border-teal-500', 'ring-2', 'ring-teal-500');
+    });
+    
+    // Marcar novo tema
+    document.getElementById('theme-' + theme).classList.add('border-teal-500', 'ring-2', 'ring-teal-500');
+    
+    // Aplicar tema
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+    } else if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+    } else {
+        localStorage.removeItem('theme');
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+}
+
+// Carregar tema atual
+(function() {
+    var savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.getElementById('theme-dark').classList.add('border-teal-500', 'ring-2', 'ring-teal-500');
+    } else if (savedTheme === 'light') {
+        document.getElementById('theme-light').classList.add('border-teal-500', 'ring-2', 'ring-teal-500');
+    } else {
+        document.getElementById('theme-system').classList.add('border-teal-500', 'ring-2', 'ring-teal-500');
+    }
+})();
+
+// Funções placeholder
+function toggleSidebarCompact() {
+    // Implementar lógica de sidebar compacta
+    console.log('Toggle sidebar compact');
+}
+
+function toggleAnimacoes() {
+    // Implementar lógica de animações
+    console.log('Toggle animações');
+}
+
+function salvarPreferenciasNotificacao() {
+    // Implementar lógica de salvar preferências
+    console.log('Salvando preferências de notificação');
+}
+
+function marcarTodasComoLidas() {
+    // Implementar lógica de marcar todas como lidas
+    alert('Todas as notificações foram marcadas como lidas.');
+}
+
+function confirmarDesativarConta() {
+    if (confirm('Tem certeza que deseja desativar sua conta? Você poderá reativá-la posteriormente.')) {
+        alert('Funcionalidade em desenvolvimento.');
+    }
+}
+
+function confirmarExcluirConta() {
+    var confirmacao = prompt('Digite "EXCLUIR" para confirmar a exclusão permanente da sua conta:');
+    if (confirmacao === 'EXCLUIR') {
+        alert('Funcionalidade em desenvolvimento.');
+    }
+}
+</script>
+
+<%- include('../partials/footer_app') %>

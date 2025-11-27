@@ -1,0 +1,230 @@
+<!-- file: views/plataforma/curso/materiais.ejs -->
+
+<%- include('../../partials/header_app') %>
+
+<main class="flex-1 overflow-y-auto">
+    <%- include('../../partials/curso/header_curso') %>
+    
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-6">
+        <%- include('../../partials/curso/nav_curso') %>
+        
+        <!-- Título e Botão Criar -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Materiais</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Arquivos de apoio organizados por listas</p>
+            </div>
+            <% if (eDonoCurso) { %>
+                <button onclick="toggleModal('modal-criar-material', true)" 
+                        class="flex items-center gap-2 px-4 py-2 bg-teal-600 rounded-lg text-sm font-medium text-white hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 transition">
+                    <i class="fa-solid fa-plus"></i> Adicionar Material
+                </button>
+            <% } %>
+        </div>
+        
+        <div class="space-y-6">
+            <!-- Materiais por Lista -->
+            <% if (listas && listas.length > 0) { %>
+                <% listas.forEach(function(lista) { %>
+                    <% if (lista.materiais && lista.materiais.length > 0) { %>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div class="p-4 flex justify-between items-center cursor-pointer" 
+                                 onclick="toggleLista('lista-mat-<%= lista.id %>')">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-folder text-yellow-500 text-xl"></i>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white"><%= lista.titulo %></h3>
+                                        <% if (lista.descricao) { %>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400"><%= lista.descricao %></p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2.5 py-0.5 rounded-full">
+                                        <%= lista.materiais.length %> arquivo(s)
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down text-gray-400 transition-transform" id="chevron-lista-mat-<%= lista.id %>"></i>
+                                </div>
+                            </div>
+                            <div id="lista-mat-<%= lista.id %>" class="border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
+                                <% lista.materiais.forEach(function(material) { %>
+                                    <div class="flex items-center justify-between p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 group">
+                                        <div class="flex items-center gap-3">
+                                            <% 
+                                            var iconClass = 'fa-file';
+                                            var iconColor = 'text-gray-400';
+                                            if (['pdf'].includes(material.tipo_arquivo)) {
+                                                iconClass = 'fa-file-pdf';
+                                                iconColor = 'text-red-500';
+                                            } else if (['doc', 'docx'].includes(material.tipo_arquivo)) {
+                                                iconClass = 'fa-file-word';
+                                                iconColor = 'text-blue-500';
+                                            } else if (['xls', 'xlsx'].includes(material.tipo_arquivo)) {
+                                                iconClass = 'fa-file-excel';
+                                                iconColor = 'text-green-500';
+                                            } else if (['ppt', 'pptx'].includes(material.tipo_arquivo)) {
+                                                iconClass = 'fa-file-powerpoint';
+                                                iconColor = 'text-orange-500';
+                                            } else if (['jpg', 'jpeg', 'png', 'gif'].includes(material.tipo_arquivo)) {
+                                                iconClass = 'fa-file-image';
+                                                iconColor = 'text-purple-500';
+                                            } else if (['zip', 'rar', '7z'].includes(material.tipo_arquivo)) {
+                                                iconClass = 'fa-file-zipper';
+                                                iconColor = 'text-yellow-600';
+                                            }
+                                            %>
+                                            <i class="fa-solid <%= iconClass %> <%= iconColor %> text-xl"></i>
+                                            <div>
+                                                <p class="font-medium text-gray-800 dark:text-gray-200"><%= material.titulo %></p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                    <%= material.tipo_arquivo.toUpperCase() %>
+                                                    <% if (material.tamanho) { %>
+                                                        · <%= (material.tamanho / 1024 / 1024).toFixed(2) %> MB
+                                                    <% } %>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <% if (eDonoCurso) { %>
+                                                <button onclick="deletarMaterial(<%= material.id %>)" 
+                                                        class="p-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            <% } %>
+                                            <a href="/cursos/<%= curso.id %>/materiais/<%= material.id %>/download" 
+                                               class="p-2 text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
+                                               title="Baixar">
+                                                <i class="fa-solid fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }); %>
+            <% } %>
+            
+            <!-- Materiais sem Lista -->
+            <% if (materiaisSemLista && materiaisSemLista.length > 0) { %>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-folder-open text-gray-400 text-xl"></i>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Outros Materiais</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Arquivos não categorizados</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2.5 py-0.5 rounded-full">
+                            <%= materiaisSemLista.length %> arquivo(s)
+                        </span>
+                    </div>
+                    <div class="border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
+                        <% materiaisSemLista.forEach(function(material) { %>
+                            <div class="flex items-center justify-between p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 group">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-file text-gray-400 text-xl"></i>
+                                    <div>
+                                        <p class="font-medium text-gray-800 dark:text-gray-200"><%= material.titulo %></p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            <%= material.tipo_arquivo.toUpperCase() %>
+                                            <% if (material.tamanho) { %>
+                                                · <%= (material.tamanho / 1024 / 1024).toFixed(2) %> MB
+                                            <% } %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <% if (eDonoCurso) { %>
+                                        <button onclick="deletarMaterial(<%= material.id %>)" 
+                                                class="p-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    <% } %>
+                                    <a href="/cursos/<%= curso.id %>/materiais/<%= material.id %>/download" 
+                                       class="p-2 text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
+                                       title="Baixar">
+                                        <i class="fa-solid fa-download"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+            
+            <!-- Estado Vazio -->
+            <% 
+            var temMateriais = (listas && listas.some(function(l) { return l.materiais && l.materiais.length > 0; })) || (materiaisSemLista && materiaisSemLista.length > 0);
+            %>
+            <% if (!temMateriais) { %>
+                <div class="bg-white dark:bg-gray-800 p-12 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+                    <i class="fa-solid fa-folder-open text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Nenhum material cadastrado</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mt-1">
+                        <% if (eDonoCurso) { %>
+                            Adicione o primeiro material do curso clicando no botão acima.
+                        <% } else { %>
+                            O professor ainda não adicionou materiais a este curso.
+                        <% } %>
+                    </p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</main>
+
+<script>
+var cursoId = <%= curso.id %>;
+
+function toggleLista(id) {
+    var content = document.getElementById(id);
+    var chevron = document.getElementById('chevron-' + id);
+    content.classList.toggle('hidden');
+    if (chevron) {
+        chevron.classList.toggle('rotate-180');
+    }
+}
+
+async function deletarMaterial(materialId) {
+    if (!confirm('Tem certeza que deseja excluir este material?')) return;
+    
+    try {
+        var res = await fetch('/cursos/' + cursoId + '/materiais/' + materialId, {
+            method: 'DELETE'
+        });
+        
+        if (res.ok) {
+            window.location.reload();
+        } else {
+            var data = await res.json();
+            alert(data.error || 'Erro ao excluir material.');
+        }
+    } catch (err) {
+        alert('Erro ao conectar com o servidor.');
+    }
+}
+</script>
+
+<% if (eDonoCurso) { %>
+    <%- include('../../partials/curso/modals/modal_criar_lista') %>
+    <%- include('../../partials/curso/modals/modal_criar_material') %>
+<% } %>
+
+<script>
+var cursoId = <%= curso.id %>;
+
+function toggleModal(modalId, show) {
+    var modal = document.getElementById(modalId);
+    if (modal) {
+        if (show) {
+            modal.classList.remove('hidden');
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+}
+</script>
+
+<%- include('../../partials/footer_app') %>

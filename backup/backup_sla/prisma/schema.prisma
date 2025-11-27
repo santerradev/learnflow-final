@@ -1,0 +1,329 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ============== ENUMs =====================
+// ==========================================
+
+enum TipoUsuario {
+  aluno
+  professor
+  administrador
+}
+
+enum StatusSolicitacao {
+  pendente
+  aprovada
+  rejeitada
+}
+
+enum UserStatus {
+  ativo
+  inativo
+}
+
+enum Instituicao {
+  IFSUL_Gravatai
+  Outro
+}
+
+enum TipoNotificacao {
+  nova_aula
+  nova_atividade
+  prazo_proximo      // 7, 3, 1 dias antes
+  prazo_atrasado     // 1, 3, 7 dias depois
+  nova_publicacao
+  novo_comentario
+  inscricao_curso
+}
+
+enum StatusNotificacao {
+  nao_lida
+  lida
+}
+
+// ==========================================
+// ========= MODELOS PRINCIPAIS =============
+// ==========================================
+
+model Usuario {
+  id            Int         @id @default(autoincrement())
+  nome          String      @db.VarChar(100)
+  email         String      @unique @db.VarChar(100)
+  senha         String      @db.VarChar(255)
+  foto_perfil   String?     @db.VarChar(255)
+  instituicao   Instituicao @default(IFSUL_Gravatai)
+  tipo          TipoUsuario
+  status        UserStatus  @default(ativo)
+  data_cadastro DateTime    @default(now())
+
+  // Relacionamentos como Professor/Admin
+  cursosCriados      Curso[]       @relation("ProfessorCursos")
+  aulasCriadas       Aula[]        @relation("ProfessorAulas")
+  atividadesCriadas  Atividade[]   @relation("ProfessorAtividades")
+  materiaisCriados   Material[]    @relation("ProfessorMateriais")
+  listasCriadas      Lista[]       @relation("ProfessorListas")
+
+  // Relacionamentos como Aluno
+  inscricoes Inscricao[]
+
+  // Relacionamentos do Fórum (Mural)
+  publicacoes Publicacao[]
+  comentarios Comentario[]
+
+  // Notificações
+  notificacoes Notificacao[]
+}
+
+model Solicitacao {
+  id               Int               @id @default(autoincrement())
+  nome             String            @db.VarChar(100)
+  email            String            @unique @db.VarChar(100)
+  senha_hash       String            @db.VarChar(255)
+  foto_perfil      String?           @db.VarChar(255)
+  instituicao      Instituicao       @default(IFSUL_Gravatai)
+  status           StatusSolicitacao @default(pendente)
+  data_solicitacao DateTime          @default(now())
+}
+
+// ==========================================
+// ============= CURSO ======================
+// ==========================================
+
+model Curso {
+  id           Int      @id @default(autoincrement())
+  titulo       String   @db.VarChar(255)
+  materia      String   @db.VarChar(100)
+  descricao    String?  @db.Text
+  capa_curso   String   @db.VarChar(255)
+  senha_acesso String?  @db.VarChar(5) // Senha opcional (máx 5 caracteres, sem espaço)
+  usuario_id   Int      // FK para o Professor que criou
+  data_criacao DateTime @default(now())
+
+  // Relacionamentos
+  professor   Usuario      @relation("ProfessorCursos", fields: [usuario_id], references: [id])
+  inscricoes  Inscricao[]
+  listas      Lista[]
+  aulas       Aula[]
+  atividades  Atividade[]
+  materiais   Material[]
+  publicacoes Publicacao[]
+
+  @@index([usuario_id])
+}
+
+model Inscricao {
+  id             Int      @id @default(autoincrement())
+  usuario_id     Int      // FK para o Aluno inscrito
+  curso_id       Int      // FK para o Curso
+  data_inscricao DateTime @default(now())
+
+  // Relacionamentos
+  aluno     Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  curso     Curso       @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  progresso Progresso[]
+
+  @@unique([usuario_id, curso_id]) // Aluno só se inscreve uma vez
+  @@index([curso_id])
+  @@index([usuario_id])
+}
+
+// ==========================================
+// ============= LISTA (TÓPICO) =============
+// ==========================================
+
+model Lista {
+  id         Int      @id @default(autoincrement())
+  titulo     String   @db.VarChar(255)
+  descricao  String?  @db.VarChar(500)
+  ordem      Int      @default(0)
+  curso_id   Int      // FK para o Curso
+  usuario_id Int      // FK para o Professor que criou
+  data_criacao DateTime @default(now())
+
+  // Relacionamentos
+  curso      Curso       @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  professor  Usuario     @relation("ProfessorListas", fields: [usuario_id], references: [id])
+  aulas      Aula[]
+  atividades Atividade[]
+  materiais  Material[]
+
+  @@index([curso_id])
+  @@index([usuario_id])
+}
+
+// ==========================================
+// ============= AULA =======================
+// ==========================================
+
+model Aula {
+  id          Int       @id @default(autoincrement())
+  titulo      String    @db.VarChar(255)
+  descricao   String    @db.Text
+  capa_aula   String?   @db.VarChar(255)
+  video       String    @db.VarChar(255)
+  duracao     Int?      // Duração em minutos
+  ordem       Int       @default(0)
+  data_prazo  DateTime? // Data limite para conclusão
+  curso_id    Int       // FK para Curso
+  lista_id    Int?      // FK para Lista (opcional)
+  usuario_id  Int       // FK para Professor que criou
+  data_criacao DateTime @default(now())
+
+  // Relacionamentos
+  curso      Curso       @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  lista      Lista?      @relation(fields: [lista_id], references: [id], onDelete: SetNull)
+  professor  Usuario     @relation("ProfessorAulas", fields: [usuario_id], references: [id])
+  progressos Progresso[]
+
+  @@index([curso_id])
+  @@index([lista_id])
+  @@index([usuario_id])
+}
+
+// ==========================================
+// ============= ATIVIDADE ==================
+// ==========================================
+
+model Atividade {
+  id          Int       @id @default(autoincrement())
+  titulo      String    @db.VarChar(255)
+  descricao   String?   @db.Text
+  conteudo    Json      // Perguntas e respostas do quiz
+  ordem       Int       @default(0)
+  data_prazo  DateTime? // Data limite para entrega
+  curso_id    Int       // FK para Curso
+  lista_id    Int?      // FK para Lista (opcional)
+  usuario_id  Int       // FK para Professor que criou
+  data_criacao DateTime @default(now())
+
+  // Relacionamentos
+  curso      Curso       @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  lista      Lista?      @relation(fields: [lista_id], references: [id], onDelete: SetNull)
+  professor  Usuario     @relation("ProfessorAtividades", fields: [usuario_id], references: [id])
+  progressos Progresso[]
+
+  @@index([curso_id])
+  @@index([lista_id])
+  @@index([usuario_id])
+}
+
+// ==========================================
+// ============= MATERIAL ===================
+// ==========================================
+
+model Material {
+  id           Int      @id @default(autoincrement())
+  titulo       String   @db.VarChar(255)
+  descricao    String?  @db.VarChar(500)
+  arquivo      String   @db.VarChar(255) // Caminho do arquivo
+  tipo_arquivo String   @db.VarChar(50)  // pdf, doc, ppt, etc.
+  tamanho      Int?     // Tamanho em bytes
+  ordem        Int      @default(0)
+  curso_id     Int      // FK para Curso
+  lista_id     Int?     // FK para Lista (opcional)
+  usuario_id   Int      // FK para Professor que criou
+  data_criacao DateTime @default(now())
+
+  // Relacionamentos
+  curso     Curso   @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  lista     Lista?  @relation(fields: [lista_id], references: [id], onDelete: SetNull)
+  professor Usuario @relation("ProfessorMateriais", fields: [usuario_id], references: [id])
+
+  @@index([curso_id])
+  @@index([lista_id])
+  @@index([usuario_id])
+}
+
+// ==========================================
+// ============= PROGRESSO ==================
+// ==========================================
+
+model Progresso {
+  id               Int       @id @default(autoincrement())
+  inscricao_id     Int       // FK para a Inscrição
+  aula_id          Int?      // FK Opcional para Aula
+  atividade_id     Int?      // FK Opcional para Atividade
+  pontuacao_obtida Int?      // Apenas para atividades (0-100)
+  concluida        Boolean   @default(true)
+  data_conclusao   DateTime  @default(now())
+
+  // Relacionamentos
+  inscricao Inscricao  @relation(fields: [inscricao_id], references: [id], onDelete: Cascade)
+  aula      Aula?      @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  atividade Atividade? @relation(fields: [atividade_id], references: [id], onDelete: Cascade)
+
+  @@unique([inscricao_id, aula_id])
+  @@unique([inscricao_id, atividade_id])
+  @@index([aula_id])
+  @@index([atividade_id])
+  @@index([inscricao_id])
+}
+
+// ==========================================
+// ======= FÓRUM / MURAL DO CURSO ===========
+// ==========================================
+
+model Publicacao {
+  id           Int      @id @default(autoincrement())
+  conteudo     String   @db.Text
+  curso_id     Int      // FK para o Curso
+  usuario_id   Int      // FK para o Autor
+  data_criacao DateTime @default(now())
+  data_edicao  DateTime @updatedAt
+
+  // Relacionamentos
+  curso       Curso        @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  autor       Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  comentarios Comentario[]
+
+  @@index([curso_id])
+  @@index([usuario_id])
+}
+
+model Comentario {
+  id            Int      @id @default(autoincrement())
+  conteudo      String   @db.Text
+  publicacao_id Int      // FK para a Publicação
+  usuario_id    Int      // FK para o Autor
+  data_criacao  DateTime @default(now())
+  data_edicao   DateTime @updatedAt
+
+  // Relacionamentos
+  publicacao Publicacao @relation(fields: [publicacao_id], references: [id], onDelete: Cascade)
+  autor      Usuario    @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@index([publicacao_id])
+  @@index([usuario_id])
+}
+
+// ==========================================
+// =========== NOTIFICAÇÕES =================
+// ==========================================
+
+model Notificacao {
+  id           Int               @id @default(autoincrement())
+  tipo         TipoNotificacao
+  titulo       String            @db.VarChar(255)
+  mensagem     String            @db.Text
+  link         String?           @db.VarChar(500) // URL para redirecionar
+  status       StatusNotificacao @default(nao_lida)
+  usuario_id   Int               // FK para o Usuário que recebe
+  data_criacao DateTime          @default(now())
+
+  // Relacionamentos
+  usuario Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@index([usuario_id])
+  @@index([status])
+  @@index([data_criacao])
+}

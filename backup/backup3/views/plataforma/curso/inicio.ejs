@@ -1,0 +1,525 @@
+<%- include('../../partials/head', { title: 'Meus Cursos' }) %>
+
+<body class="bg-gray-50 dark:bg-gray-900">
+    <%- include('../../partials/navbar/navbar_app') %>
+    
+    <% if (typeof user !== 'undefined' && user) { %>
+        <% if (user.tipo === 'ALUNO') { %>
+            <%- include('../../partials/sidebar/sidebar_aluno') %>
+        <% } else if (user.tipo === 'PROFESSOR') { %>
+            <%- include('../../partials/sidebar/sidebar_professor') %>
+        <% } else if (user.tipo === 'ADMINISTRADOR') { %>
+            <%- include('../../partials/sidebar/sidebar_admin') %>
+        <% } %>
+    <% } %>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="lg:ml-64 pt-20 min-h-screen transition-all duration-300">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Header -->
+            <div class="mb-8 fade-in">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    Bem-vindo de volta<% if (typeof user !== 'undefined' && user) { %>, <%= user.nome.split(' ')[0] %><% } %>! 👋
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Seus cursos estão prontos para você
+                </p>
+            </div>
+
+            <!-- Alerts -->
+            <%- include('../../partials/alerts') %>
+
+            <!-- Action Buttons -->
+            <% if (typeof user !== 'undefined' && user && (user.tipo === 'PROFESSOR' || user.tipo === 'ADMINISTRADOR')) { %>
+                <div class="mb-6 flex flex-wrap gap-3">
+                    <button 
+                        onclick="openModalCriarCurso()"
+                        class="btn-primary text-white px-6 py-3 rounded-lg font-medium inline-flex items-center shadow-lg hover:shadow-xl transition"
+                    >
+                        <i class="fas fa-plus mr-2"></i>
+                        Criar Novo Curso
+                    </button>
+                    <a 
+                        href="/cursos/meus-cursos"
+                        class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 px-6 py-3 rounded-lg font-medium inline-flex items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                    >
+                        <i class="fas fa-graduation-cap mr-2"></i>
+                        Meus Cursos
+                    </a>
+                </div>
+            <% } %>
+
+           
+
+            <!-- Courses Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <% if (typeof cursos !== 'undefined' && cursos && cursos.length > 0) { %>
+                    <% cursos.forEach((curso, index) => { %>
+                        <div class="curso-card-<%= index %> bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition fade-in">
+                            <!-- Course Image -->
+                            <div class="relative h-48 bg-gradient-to-br from-teal-400 to-teal-600 overflow-hidden">
+                                <% if (curso.imagem) { %>
+                                    <img src="<%= curso.imagem %>" alt="<%= curso.titulo %>" class="w-full h-full object-cover">
+                                <% } else { %>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <i class="fas fa-book text-white text-6xl opacity-30"></i>
+                                    </div>
+                                <% } %>
+                                
+                                <!-- Menu Options -->
+                                <div class="absolute top-3 right-3">
+                                    <div class="relative" x-data="{ open: false }">
+                                        <button 
+                                            @click="open = !open"
+                                            class="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                                        >
+                                            <i class="fas fa-ellipsis-v text-gray-600 dark:text-gray-300"></i>
+                                        </button>
+                                        
+                                        <!-- Dropdown -->
+                                        <div 
+                                            x-show="open" 
+                                            @click.away="open = false"
+                                            class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-1 z-10"
+                                            style="display: none;"
+                                        >
+                                            <a href="/cursos/<%= curso.id %>" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                <i class="fas fa-eye mr-2"></i> Ver Curso
+                                            </a>
+                                            <% if (typeof user !== 'undefined' && user && (user.tipo === 'PROFESSOR' || user.tipo === 'ADMINISTRADOR')) { %>
+                                                <a href="/cursos/<%= curso.id %>/editar" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                    <i class="fas fa-edit mr-2"></i> Editar
+                                                </a>
+                                                <button type="button" class="btn-excluir-curso w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700" data-curso-id="<%= curso.id %>">
+                                                    <i class="fas fa-trash mr-2"></i> Excluir
+                                                </button>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Course Info -->
+                            <div class="p-5">
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                                    <%= curso.titulo %>
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                    <%= curso.materia || 'Sem matéria' %>
+                                </p>
+
+                                <!-- Professor -->
+                                <div class="flex items-center mb-4">
+                                    <div class="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm mr-2">
+                                        <%= curso.professor?.nome?.charAt(0).toUpperCase() || 'P' %>
+                                    </div>
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                                        Prof. <%= curso.professor?.nome || 'Desconhecido' %>
+                                    </span>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex items-center gap-2">
+                                    <% if (curso.isInscrito) { %>
+                                        <a 
+                                            href="/cursos/<%= curso.id %>" 
+                                            class="flex-1 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium text-center transition"
+                                        >
+                                            Acessar
+                                        </a>
+                                    <% } else { %>
+                                        <button 
+                                            type="button"
+                                            class="btn-inscrever flex-1 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition"
+                                            data-curso-id="<%= curso.id %>"
+                                            data-tem-senha="<%= curso.senhaAcesso ? '1' : '0' %>"
+                                        >
+                                            Inscrever
+                                        </button>
+                                    <% } %>
+                                    
+                                    <a 
+                                        href="/cursos/<%= curso.id %>/mural" 
+                                        class="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg font-medium text-center transition"
+                                    >
+                                        <i class="fas fa-comments mr-1"></i>
+                                        Mural
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <!-- Empty State -->
+                    <div class="col-span-full">
+                        <div class="text-center py-16">
+                            <i class="fas fa-graduation-cap text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                Nenhum curso encontrado
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-6">
+                                <% if (typeof user !== 'undefined' && user && (user.tipo === 'PROFESSOR' || user.tipo === 'ADMINISTRADOR')) { %>
+                                    Comece criando seu primeiro curso
+                                <% } else { %>
+                                    Aguarde novos cursos serem disponibilizados
+                                <% } %>
+                            </p>
+                            <% if (typeof user !== 'undefined' && user && (user.tipo === 'PROFESSOR' || user.tipo === 'ADMINISTRADOR')) { %>
+                                <button 
+                                    onclick="openModalCriarCurso()"
+                                    class="btn-primary text-white px-6 py-3 rounded-lg font-medium inline-flex items-center"
+                                >
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Criar Primeiro Curso
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Criar Curso -->
+    <div id="modalCriarCurso" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center overflow-y-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 my-8 fade-in">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Criar Novo Curso
+                </h3>
+                <button onclick="closeModalCriarCurso()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <form id="formCriarCurso" onsubmit="return handleCriarCurso(event)">
+                <div class="p-6 space-y-4 max-h-[calc(90vh-200px)] overflow-y-auto">
+                    <div>
+                        <label for="tituloCurso" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Título do Curso <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="tituloCurso" 
+                            name="titulo" 
+                            placeholder="Ex: Matemática Avançada"
+                            required
+                            maxlength="100"
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="materiaCurso" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Matéria <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="materiaCurso" 
+                            name="materia" 
+                            placeholder="Ex: 3º Ano - Turma A"
+                            required
+                            maxlength="100"
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="descricaoCurso" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Descrição
+                        </label>
+                        <textarea 
+                            id="descricaoCurso" 
+                            name="descricao" 
+                            rows="4"
+                            placeholder="Descreva o curso..."
+                            maxlength="1000"
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+                        ></textarea>
+                    </div>
+
+                    <div>
+                        <label for="senhaAcessoCurso" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Senha de Acesso (opcional)
+                        </label>
+                        <input 
+                            type="text" 
+                            id="senhaAcessoCurso" 
+                            name="senhaAcesso" 
+                            placeholder="Máximo 5 caracteres"
+                            maxlength="5"
+                            pattern="[^\s]{0,5}"
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        >
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            Deixe em branco para curso sem senha. Máximo 5 caracteres, sem espaços.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Imagem do Curso (opcional)
+                        </label>
+                        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-teal-500 transition">
+                            <input 
+                                type="file" 
+                                id="imagemCurso" 
+                                name="imagem" 
+                                accept="image/*"
+                                class="hidden"
+                                onchange="handleImagemCursoSelect(event)"
+                            >
+                            <label for="imagemCurso" class="cursor-pointer">
+                                <i class="fas fa-image text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    Clique para escolher imagem
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                    PNG, JPG (Máx: 5MB)
+                                </p>
+                            </label>
+                            <div id="imagemCursoPreview" class="mt-2 hidden"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
+                    <button 
+                        type="button"
+                        onclick="closeModalCriarCurso()" 
+                        class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium transition"
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        type="submit"
+                        class="px-4 py-2 btn-primary text-white rounded-lg font-medium transition"
+                    >
+                        <i class="fas fa-plus mr-2"></i>
+                        Criar Curso
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Inscrever com Senha -->
+    <div id="modalSenhaInscricao" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 fade-in">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Senha de Acesso Necessária
+                </h3>
+            </div>
+
+            <form id="formSenhaInscricao" onsubmit="return handleInscricaoComSenha(event)">
+                <div class="p-6">
+                    <label for="senhaInscricao" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Digite a senha do curso
+                    </label>
+                    <input 
+                        type="text" 
+                        id="senhaInscricao" 
+                        name="senha" 
+                        placeholder="Senha"
+                        required
+                        maxlength="5"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                    <input type="hidden" id="cursoIdInscricao" name="cursoId">
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
+                    <button 
+                        type="button"
+                        onclick="closeModalSenhaInscricao()" 
+                        class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium transition"
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        type="submit"
+                        class="px-4 py-2 btn-primary text-white rounded-lg font-medium transition"
+                    >
+                        Inscrever
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../../partials/footer/footer_app') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listeners para botões de inscrever
+            const btnsInscrever = document.querySelectorAll('.btn-inscrever');
+            btnsInscrever.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const cursoId = this.getAttribute('data-curso-id');
+                    const temSenha = this.getAttribute('data-tem-senha') === '1';
+                    inscreverCurso(cursoId, temSenha);
+                });
+            });
+
+            // Event listeners para botões de excluir
+            const btnsExcluir = document.querySelectorAll('.btn-excluir-curso');
+            btnsExcluir.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const cursoId = this.getAttribute('data-curso-id');
+                    confirmarExcluirCurso(cursoId);
+                });
+            });
+        });
+
+        function openModalCriarCurso() {
+            const modal = document.getElementById('modalCriarCurso');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModalCriarCurso() {
+            const modal = document.getElementById('modalCriarCurso');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('formCriarCurso').reset();
+            document.getElementById('imagemCursoPreview').classList.add('hidden');
+        }
+
+        function handleImagemCursoSelect(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('imagemCursoPreview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = '<img src="' + e.target.result + '" class="max-w-full h-32 rounded-lg mx-auto">';
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function handleCriarCurso(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            
+            try {
+                showLoading('Criando curso...');
+                
+                const response = await fetch('/cursos', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('Curso criado com sucesso!', 'success');
+                    closeModalCriarCurso();
+                    setTimeout(function() { location.reload(); }, 1000);
+                } else {
+                    showAlert(result.error || 'Erro ao criar curso', 'error');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('Erro ao criar curso', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function inscreverCurso(cursoId, temSenha) {
+            if (temSenha) {
+                document.getElementById('cursoIdInscricao').value = cursoId;
+                const modal = document.getElementById('modalSenhaInscricao');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                realizarInscricao(cursoId, null);
+            }
+        }
+
+        function closeModalSenhaInscricao() {
+            const modal = document.getElementById('modalSenhaInscricao');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('formSenhaInscricao').reset();
+        }
+
+        async function handleInscricaoComSenha(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const cursoId = formData.get('cursoId');
+            const senha = formData.get('senha');
+            
+            await realizarInscricao(cursoId, senha);
+        }
+
+        async function realizarInscricao(cursoId, senha) {
+            try {
+                showLoading('Inscrevendo...');
+                
+                const response = await fetch('/cursos/' + cursoId + '/inscrever', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ senha: senha })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('Inscrição realizada com sucesso!', 'success');
+                    closeModalSenhaInscricao();
+                    setTimeout(function() { location.reload(); }, 1000);
+                } else {
+                    showAlert(result.error || 'Erro ao inscrever', 'error');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('Erro ao inscrever no curso', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function confirmarExcluirCurso(cursoId) {
+            showConfirmModal({
+                title: 'Excluir Curso',
+                message: 'Tem certeza que deseja excluir este curso? Esta ação não pode ser desfeita.',
+                type: 'danger',
+                confirmText: 'Sim, excluir',
+                onConfirm: function() { excluirCurso(cursoId); }
+            });
+        }
+
+        async function excluirCurso(cursoId) {
+            try {
+                showLoading('Excluindo curso...');
+                
+                const response = await fetch('/cursos/' + cursoId, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('Curso excluído com sucesso!', 'success');
+                    setTimeout(function() { location.reload(); }, 1000);
+                } else {
+                    showAlert(result.error || 'Erro ao excluir curso', 'error');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('Erro ao excluir curso', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+
+<%- include('../../partials/scripts') %>

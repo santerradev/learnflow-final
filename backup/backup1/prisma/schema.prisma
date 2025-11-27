@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- ENUMs ----
+enum TipoUsuario {
+  aluno
+  professor
+  administrador 
+}
+
+enum StatusSolicitacao {
+  pendente
+  aprovada
+  rejeitada
+}
+
+enum UserStatus {
+  ativo
+  inativo
+}
+
+enum Instituicao {
+  IFSUL_Gravatai 
+  Outro
+}
+
+// ---- Modelos de Entidade ----
+
+model Usuario {
+  id            Int      @id @default(autoincrement())
+  nome          String   @db.VarChar(100)
+  email         String   @unique @db.VarChar(100)
+  senha         String   @db.VarChar(255)
+  foto_perfil   String?  @db.VarChar(255)
+  instituicao   Instituicao @default(IFSUL_Gravatai)
+  tipo          TipoUsuario 
+  status        UserStatus @default(ativo) 
+  data_cadastro DateTime @default(now())
+
+  // Relacionamentos como Professor
+  cursosCriados     Curso[]     @relation("ProfessorCursos")
+  aulasCriadas      Aula[]      @relation("ProfessorAulas")
+  atividadesCriadas Atividade[] @relation("ProfessorAtividades")
+
+  // Relacionamentos como Aluno
+  inscricoes Inscricao[]
+}
+
+model Solicitacao {
+  id               Int      @id @default(autoincrement())
+  nome             String   @db.VarChar(100)
+  email            String   @unique @db.VarChar(100)
+  senha_hash       String   @db.VarChar(255)
+  foto_perfil      String?  @db.VarChar(255)
+  status           StatusSolicitacao @default(pendente)
+  data_solicitacao DateTime @default(now())
+}
+
+model Curso {
+  id         Int      @id @default(autoincrement())
+  titulo     String   @db.VarChar(255)
+  materia    String   @db.VarChar(100)
+  descricao  String?  @db.Text 
+
+  capa_curso String   @db.VarChar(255)
+  usuario_id Int      // FK para o Professor que criou
+
+  professor  Usuario     @relation("ProfessorCursos", fields: [usuario_id], references: [id])
+  inscricoes Inscricao[]
+  aulas      Aula[]
+  atividades Atividade[]
+
+  @@index([usuario_id])
+}
+
+model Inscricao {
+  id             Int      @id @default(autoincrement())
+  usuario_id     Int // FK para o Aluno inscrito [cite: 717]
+  curso_id       Int // FK para o Curso [cite: 717]
+  data_inscricao DateTime @default(now())
+
+  aluno     Usuario     @relation(fields: [usuario_id], references: [id])
+  curso     Curso       @relation(fields: [curso_id], references: [id])
+  progresso Progresso[]
+
+  @@unique([usuario_id, curso_id]) // Aluno só se inscreve uma vez [cite: 717]
+  @@index([curso_id])
+}
+
+model Aula {
+  id         Int     @id @default(autoincrement())
+  titulo     String  @db.VarChar(255)
+  materia    String  @db.VarChar(100)
+  descricao  String  @db.Text
+  capa_aula  String  @db.VarChar(255)
+  video      String  @db.VarChar(255)
+  ordem      Int // Sequência [cite: 717]
+  curso_id   Int // FK para Curso [cite: 718]
+  usuario_id Int // FK para Professor que criou [cite: 718]
+
+  curso     Curso     @relation(fields: [curso_id], references: [id])
+  professor Usuario   @relation("ProfessorAulas", fields: [usuario_id], references: [id])
+  progressos Progresso[]
+
+  @@index([curso_id])
+  @@index([usuario_id])
+}
+
+model Atividade {
+  id         Int     @id @default(autoincrement())
+  titulo     String  @db.VarChar(255)
+  materia    String  @db.VarChar(100)
+  conteudo   Json // Perguntas e respostas [cite: 718]
+  ordem      Int // Sequência
+  curso_id   Int // FK para Curso [cite: 718]
+  usuario_id Int // FK para Professor que criou [cite: 718]
+
+  curso      Curso     @relation(fields: [curso_id], references: [id])
+  professor  Usuario   @relation("ProfessorAtividades", fields: [usuario_id], references: [id])
+  progressos Progresso[]
+
+  @@index([curso_id])
+  @@index([usuario_id])
+}
+
+// REFATORAÇÃO: Este modelo relacional substitui os campos JSON do DB antigo[cite: 776].
+// Está alinhado com o novo schema[cite: 718, 719].
+model Progresso {
+  id               Int       @id @default(autoincrement())
+  inscricao_id     Int // FK para a Inscrição [cite: 719]
+  aula_id          Int? // FK Opcional para Aula [cite: 719, 739]
+  atividade_id     Int? // FK Opcional para Atividade [cite: 719, 741]
+  pontuacao_obtida Int? // Apenas para atividades
+  concluida        Boolean   @default(true) // [cite: 719]
+  data_conclusao   DateTime  @default(now())
+
+  inscricao Inscricao  @relation(fields: [inscricao_id], references: [id])
+  aula      Aula?      @relation(fields: [aula_id], references: [id])
+  atividade Atividade? @relation(fields: [atividade_id], references: [id])
+
+  @@unique([inscricao_id, aula_id]) // Progresso único por aula [cite: 719]
+  @@unique([inscricao_id, atividade_id]) // Progresso único por atividade [cite: 719]
+  @@index([aula_id])
+  @@index([atividade_id])
+}

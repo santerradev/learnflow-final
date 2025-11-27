@@ -1,0 +1,230 @@
+<!-- Modal Criar Nova Atividade -->
+<div id="modalCriarAtividade" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center overflow-y-auto">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 my-8 fade-in">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-clipboard-list text-teal-600"></i>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Nova Tarefa
+                </h3>
+            </div>
+            <button onclick="closeModalCriarAtividade()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <form id="formCriarAtividade" onsubmit="return handleCriarAtividade(event)">
+            <div class="p-6 space-y-4 max-h-[calc(90vh-250px)] overflow-y-auto">
+                <!-- Título da Tarefa -->
+                <div>
+                    <label for="tituloAtividade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Título da Tarefa <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="tituloAtividade" 
+                        name="titulo" 
+                        placeholder="Ex: Exercícios de Vetores"
+                        required
+                        maxlength="100"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Descrição -->
+                <div>
+                    <label for="descricaoAtividade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Descrição <span class="text-red-500">*</span>
+                    </label>
+                    <textarea 
+                        id="descricaoAtividade" 
+                        name="descricao" 
+                        rows="4"
+                        placeholder="Descreva a tarefa..."
+                        required
+                        maxlength="1000"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+                    ></textarea>
+                </div>
+
+                <!-- Data de Entrega -->
+                <div>
+                    <label for="dataEntregaAtividade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Data de Entrega <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="datetime-local" 
+                        id="dataEntregaAtividade" 
+                        name="dataEntrega" 
+                        required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Lista -->
+                <div>
+                    <label for="listaIdAtividade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Lista <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        id="listaIdAtividade" 
+                        name="listaId" 
+                        required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                        <option value="">Selecione uma lista</option>
+                        <% if (typeof listas !== 'undefined' && listas && listas.length > 0) { %>
+                            <% listas.forEach(lista => { %>
+                                <option value="<%= lista.id %>"><%= lista.titulo %></option>
+                            <% }); %>
+                        <% } %>
+                    </select>
+                </div>
+
+                <!-- Pontuação -->
+                <div>
+                    <label for="pontuacaoAtividade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Pontuação Máxima
+                    </label>
+                    <input 
+                        type="number" 
+                        id="pontuacaoAtividade" 
+                        name="pontuacao" 
+                        placeholder="100"
+                        min="0"
+                        max="1000"
+                        step="0.1"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Arquivo Anexo (opcional) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Anexar Arquivo (opcional)
+                    </label>
+                    <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-teal-500 transition">
+                        <input 
+                            type="file" 
+                            id="arquivoAtividade" 
+                            name="arquivo" 
+                            class="hidden"
+                            onchange="handleAtividadeFileSelect(event)"
+                        >
+                        <label for="arquivoAtividade" class="cursor-pointer">
+                            <i class="fas fa-paperclip text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                Clique para anexar arquivo
+                            </p>
+                            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                PDF, DOC, DOCX, ZIP (Máx: 10MB)
+                            </p>
+                        </label>
+                        <div id="atividadeFileName" class="mt-2 text-sm text-teal-600 hidden"></div>
+                    </div>
+                </div>
+
+                <input type="hidden" name="cursoId" id="cursoIdAtividade" value="<%= typeof cursoId !== 'undefined' ? cursoId : '' %>">
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
+                <button 
+                    type="button"
+                    onclick="closeModalCriarAtividade()" 
+                    class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium transition"
+                >
+                    Cancelar
+                </button>
+                <button 
+                    type="submit"
+                    class="px-4 py-2 btn-primary text-white rounded-lg font-medium transition"
+                >
+                    <i class="fas fa-plus mr-2"></i>
+                    Criar Tarefa
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModalCriarAtividade(cursoId = null) {
+        const modal = document.getElementById('modalCriarAtividade');
+        const cursoIdInput = document.getElementById('cursoIdAtividade');
+        
+        if (cursoId) {
+            cursoIdInput.value = cursoId;
+        }
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        // Definir data mínima como hoje
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('dataEntregaAtividade').min = now.toISOString().slice(0, 16);
+        
+        setTimeout(() => {
+            document.getElementById('tituloAtividade').focus();
+        }, 100);
+    }
+
+    function closeModalCriarAtividade() {
+        const modal = document.getElementById('modalCriarAtividade');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        
+        document.getElementById('formCriarAtividade').reset();
+        document.getElementById('atividadeFileName').classList.add('hidden');
+    }
+
+    function handleAtividadeFileSelect(event) {
+        const file = event.target.files[0];
+        const fileNameDiv = document.getElementById('atividadeFileName');
+        
+        if (file) {
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            fileNameDiv.textContent = `${file.name} (${sizeMB} MB)`;
+            fileNameDiv.classList.remove('hidden');
+        } else {
+            fileNameDiv.classList.add('hidden');
+        }
+    }
+
+    async function handleCriarAtividade(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const cursoId = formData.get('cursoId');
+        
+        try {
+            showLoading('Criando atividade...');
+            
+            const response = await fetch(`/cursos/${cursoId}/atividades`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showAlert('Atividade criada com sucesso!', 'success');
+                closeModalCriarAtividade();
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showAlert(result.error || 'Erro ao criar atividade', 'error');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showAlert('Erro ao criar atividade', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+</script>

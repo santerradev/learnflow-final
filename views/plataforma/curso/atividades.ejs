@@ -1,0 +1,249 @@
+<!-- file: views/plataforma/curso/atividades.ejs -->
+
+<%- include('../../partials/header_app') %>
+
+<main class="flex-1 overflow-y-auto">
+    <%- include('../../partials/curso/header_curso') %>
+    
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-6">
+        <%- include('../../partials/curso/nav_curso') %>
+        
+        <!-- Título e Botão Criar -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Atividades</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Tarefas e questionários organizados por listas</p>
+            </div>
+            <% if (eDonoCurso) { %>
+                <button onclick="toggleModal('modal-criar-atividade', true)" 
+                        class="flex items-center gap-2 px-4 py-2 bg-teal-600 rounded-lg text-sm font-medium text-white hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 transition">
+                    <i class="fa-solid fa-plus"></i> Criar Atividade
+                </button>
+            <% } %>
+        </div>
+        
+        <div class="space-y-6">
+            <!-- Atividades por Lista -->
+            <% if (listas && listas.length > 0) { %>
+                <% listas.forEach(function(lista) { %>
+                    <% var temConteudo = (lista.atividades && lista.atividades.length > 0) || (lista.materiais && lista.materiais.length > 0); %>
+                    <% if (temConteudo) { %>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div class="p-4 flex justify-between items-center cursor-pointer" 
+                                 onclick="toggleLista('lista-ativ-<%= lista.id %>')">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-folder-open text-purple-500 text-xl"></i>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white"><%= lista.titulo %></h3>
+                                        <% if (lista.descricao) { %>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400"><%= lista.descricao %></p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2.5 py-0.5 rounded-full">
+                                        <%= lista.atividades ? lista.atividades.length : 0 %> atividade(s)
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down text-gray-400 transition-transform" id="chevron-lista-ativ-<%= lista.id %>"></i>
+                                </div>
+                            </div>
+                            <div id="lista-ativ-<%= lista.id %>" class="border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
+                                <!-- Atividades -->
+                                <% if (lista.atividades && lista.atividades.length > 0) { %>
+                                    <% lista.atividades.forEach(function(atividade) { %>
+                                        <a href="/cursos/<%= curso.id %>/atividades/<%= atividade.id %>" 
+                                           class="flex items-center justify-between p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                            <div class="flex items-center gap-3">
+                                                <% if (atividadesConcluidasIds && atividadesConcluidasIds.includes(atividade.id)) { %>
+                                                    <i class="fa-solid fa-check-circle text-green-500 text-lg"></i>
+                                                <% } else { %>
+                                                    <i class="fa-solid fa-file-lines text-purple-500 text-lg"></i>
+                                                <% } %>
+                                                <div>
+                                                    <p class="font-medium text-gray-800 dark:text-gray-200"><%= atividade.titulo %></p>
+                                                    <% if (atividade.data_prazo) { %>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                            Entrega: <%= new Date(atividade.data_prazo).toLocaleDateString('pt-BR') %>
+                                                        </p>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                            <% if (atividadesConcluidasIds && atividadesConcluidasIds.includes(atividade.id)) { %>
+                                                <span class="text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-3 py-1">
+                                                    Concluída
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-xs font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200 px-3 py-1">
+                                                    Disponível
+                                                </span>
+                                            <% } %>
+                                        </a>
+                                    <% }); %>
+                                <% } %>
+                                
+                                <!-- Materiais -->
+                                <% if (lista.materiais && lista.materiais.length > 0) { %>
+                                    <% lista.materiais.forEach(function(material) { %>
+                                        <div class="flex items-center justify-between p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <div class="flex items-center gap-3">
+                                                <i class="fa-solid fa-file-alt text-green-500 text-lg"></i>
+                                                <div>
+                                                    <p class="font-medium text-gray-800 dark:text-gray-200"><%= material.titulo %></p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                        <%= material.tipo_arquivo.toUpperCase() %>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <a href="/cursos/<%= curso.id %>/materiais/<%= material.id %>/download" 
+                                               class="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300">
+                                                <i class="fa-solid fa-download"></i>
+                                            </a>
+                                        </div>
+                                    <% }); %>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }); %>
+            <% } %>
+            
+            <!-- Atividades sem Lista -->
+            <% if (atividadesSemLista && atividadesSemLista.length > 0) { %>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-lines text-gray-400 text-xl"></i>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Outras Atividades</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Atividades não categorizadas</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2.5 py-0.5 rounded-full">
+                            <%= atividadesSemLista.length %> atividade(s)
+                        </span>
+                    </div>
+                    <div class="border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
+                        <% atividadesSemLista.forEach(function(atividade) { %>
+                            <a href="/cursos/<%= curso.id %>/atividades/<%= atividade.id %>" 
+                               class="flex items-center justify-between p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                <div class="flex items-center gap-3">
+                                    <% if (atividadesConcluidasIds && atividadesConcluidasIds.includes(atividade.id)) { %>
+                                        <i class="fa-solid fa-check-circle text-green-500 text-lg"></i>
+                                    <% } else { %>
+                                        <i class="fa-solid fa-file-lines text-purple-500 text-lg"></i>
+                                    <% } %>
+                                    <div>
+                                        <p class="font-medium text-gray-800 dark:text-gray-200"><%= atividade.titulo %></p>
+                                        <% if (atividade.data_prazo) { %>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Entrega: <%= new Date(atividade.data_prazo).toLocaleDateString('pt-BR') %>
+                                            </p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <% if (atividadesConcluidasIds && atividadesConcluidasIds.includes(atividade.id)) { %>
+                                    <span class="text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-3 py-1">
+                                        Concluída
+                                    </span>
+                                <% } else { %>
+                                    <span class="text-xs font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200 px-3 py-1">
+                                        Disponível
+                                    </span>
+                                <% } %>
+                            </a>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+            
+            <!-- Materiais sem Lista -->
+            <% if (materiaisSemLista && materiaisSemLista.length > 0) { %>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-alt text-green-400 text-xl"></i>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Materiais de Apoio</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Arquivos complementares</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2.5 py-0.5 rounded-full">
+                            <%= materiaisSemLista.length %> material(is)
+                        </span>
+                    </div>
+                    <div class="border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
+                        <% materiaisSemLista.forEach(function(material) { %>
+                            <div class="flex items-center justify-between p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-file-alt text-green-500 text-lg"></i>
+                                    <div>
+                                        <p class="font-medium text-gray-800 dark:text-gray-200"><%= material.titulo %></p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            <%= material.tipo_arquivo.toUpperCase() %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <a href="/cursos/<%= curso.id %>/materiais/<%= material.id %>/download" 
+                                   class="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+            
+            <!-- Estado Vazio -->
+            <% 
+            var temAtividades = (listas && listas.some(function(l) { return l.atividades && l.atividades.length > 0; })) || (atividadesSemLista && atividadesSemLista.length > 0);
+            var temMateriais = (listas && listas.some(function(l) { return l.materiais && l.materiais.length > 0; })) || (materiaisSemLista && materiaisSemLista.length > 0);
+            %>
+            <% if (!temAtividades && !temMateriais) { %>
+                <div class="bg-white dark:bg-gray-800 p-12 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+                    <i class="fa-solid fa-file-lines text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Nenhuma atividade cadastrada</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mt-1">
+                        <% if (eDonoCurso) { %>
+                            Crie a primeira atividade do curso clicando no botão acima.
+                        <% } else { %>
+                            O professor ainda não adicionou atividades a este curso.
+                        <% } %>
+                    </p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</main>
+
+<script>
+function toggleLista(id) {
+    var content = document.getElementById(id);
+    var chevron = document.getElementById('chevron-' + id);
+    content.classList.toggle('hidden');
+    if (chevron) {
+        chevron.classList.toggle('rotate-180');
+    }
+}
+</script>
+
+<% if (eDonoCurso) { %>
+    <%- include('../../partials/curso/modals/modal_criar_lista') %>
+    <%- include('../../partials/curso/modals/modal_criar_atividade') %>
+<% } %>
+
+<script>
+var cursoId = <%= curso.id %>;
+
+function toggleModal(modalId, show) {
+    var modal = document.getElementById(modalId);
+    if (modal) {
+        if (show) {
+            modal.classList.remove('hidden');
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+}
+</script>
+
+<%- include('../../partials/footer_app') %>

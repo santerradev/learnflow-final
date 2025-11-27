@@ -1,0 +1,48 @@
+<!-- Bottom Navigation Bar para Mobile -->
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50">
+    <div class="grid grid-cols-5 h-16">
+        <!-- Início -->
+        <a href="/cursos" class="flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400">
+            <i class="fas fa-home text-xl mb-1"></i>
+            <span class="text-xs">Início</span>
+        </a>
+
+        <!-- Cursos -->
+        <a href="/meus-cursos" class="flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400">
+            <i class="fas fa-graduation-cap text-xl mb-1"></i>
+            <span class="text-xs">Cursos</span>
+        </a>
+
+        <!-- Central Action (Add/Create) -->
+        <button 
+            onclick="openQuickCreateModal()"
+            class="flex flex-col items-center justify-center -mt-4"
+        >
+            <div class="w-14 h-14 bg-teal-500 rounded-full flex items-center justify-center shadow-lg">
+                <i class="fas fa-plus text-white text-2xl"></i>
+            </div>
+        </button>
+
+        <!-- Chat -->
+        <a href="/chat" class="flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400">
+            <i class="fas fa-comments text-xl mb-1"></i>
+            <span class="text-xs">Chat</span>
+        </a>
+
+        <!-- Perfil -->
+        <a href="/perfil" class="flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400">
+            <i class="fas fa-user text-xl mb-1"></i>
+            <span class="text-xs">Perfil</span>
+        </a>
+    </div>
+</nav>
+
+<!-- Spacer para o conteúdo não ficar embaixo do bottom nav -->
+<div class="lg:hidden h-16"></div>
+
+<script>
+    function openQuickCreateModal() {
+        // Abrir modal de criação rápida
+        showAlert('Modal de criação em desenvolvimento', 'info');
+    }
+</script>

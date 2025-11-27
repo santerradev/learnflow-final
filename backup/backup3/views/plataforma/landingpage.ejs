@@ -1,0 +1,421 @@
+<%- include('../partials/head', { title: 'Início' }) %>
+
+<body class="bg-gray-50 dark:bg-gray-900">
+    <%- include('../partials/navbar/navbar_auth') %>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-teal-500 to-teal-600 text-white overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-10"></div>
+        <div class="container mx-auto px-4 py-20 lg:py-32 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Content -->
+                <div class="fade-in">
+                    <h1 class="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
+                        Descubra novas possibilidades de ensino
+                    </h1>
+                    <p class="text-xl lg:text-2xl mb-8 text-teal-100">
+                        Plataforma completa para instituições de ensino. Gestão de cursos, aulas interativas e comunicação integrada.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="/cadastro" class="bg-white text-teal-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition shadow-lg inline-block text-center">
+                            Começar Gratuitamente
+                        </a>
+                        <a href="#recursos" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-teal-600 transition inline-block text-center">
+                            Saiba Mais
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Illustration -->
+                <div class="hidden lg:block">
+                    <div class="relative">
+                        <div class="absolute -top-10 -right-10 w-72 h-72 bg-teal-400 rounded-full opacity-20 blur-3xl"></div>
+                        <div class="absolute -bottom-10 -left-10 w-72 h-72 bg-teal-300 rounded-full opacity-20 blur-3xl"></div>
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800" alt="Students learning" class="rounded-lg shadow-2xl relative z-10">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wave Divider -->
+        <div class="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z" fill="currentColor" class="text-gray-50 dark:text-gray-900"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="fade-in">
+                    <div class="text-4xl lg:text-5xl font-bold text-teal-600 mb-2">500+</div>
+                    <div class="text-gray-600 dark:text-gray-400">Cursos Ativos</div>
+                </div>
+                <div class="fade-in" style="animation-delay: 0.1s;">
+                    <div class="text-4xl lg:text-5xl font-bold text-teal-600 mb-2">2.5k</div>
+                    <div class="text-gray-600 dark:text-gray-400">Professores</div>
+                </div>
+                <div class="fade-in" style="animation-delay: 0.2s;">
+                    <div class="text-4xl lg:text-5xl font-bold text-teal-600 mb-2">15k</div>
+                    <div class="text-gray-600 dark:text-gray-400">Alunos Ativos</div>
+                </div>
+                <div class="fade-in" style="animation-delay: 0.3s;">
+                    <div class="text-4xl lg:text-5xl font-bold text-teal-600 mb-2">98%</div>
+                    <div class="text-gray-600 dark:text-gray-400">Satisfação</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="recursos" class="py-20 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    Recursos Poderosos
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Tudo que você precisa para ensinar e aprender de forma eficiente
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition fade-in">
+                    <div class="w-14 h-14 bg-teal-100 dark:bg-teal-900/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-graduation-cap text-2xl text-teal-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                        Gestão de Cursos
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Crie e organize cursos completos com aulas, atividades e materiais didáticos de forma simples e intuitiva.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition fade-in" style="animation-delay: 0.1s;">
+                    <div class="w-14 h-14 bg-teal-100 dark:bg-teal-900/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-video text-2xl text-teal-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                        Aulas Interativas
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Videoaulas com player integrado, suporte a YouTube e upload direto. Acompanhe o progresso dos alunos em tempo real.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition fade-in" style="animation-delay: 0.2s;">
+                    <div class="w-14 h-14 bg-teal-100 dark:bg-teal-900/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-clipboard-list text-2xl text-teal-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                        Atividades e Tarefas
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Crie tarefas com prazos, anexos e correção automática. Notificações inteligentes mantêm todos informados.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition fade-in" style="animation-delay: 0.3s;">
+                    <div class="w-14 h-14 bg-teal-100 dark:bg-teal-900/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-comments text-2xl text-teal-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                        Chat em Tempo Real
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Comunicação instantânea entre alunos e professores. Crie grupos de estudo e tire dúvidas rapidamente.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition fade-in" style="animation-delay: 0.4s;">
+                    <div class="w-14 h-14 bg-teal-100 dark:bg-teal-900/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-bar text-2xl text-teal-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                        Relatórios e Analytics
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Acompanhe o desempenho com relatórios detalhados. Identifique pontos de melhoria e celebre conquistas.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition fade-in" style="animation-delay: 0.5s;">
+                    <div class="w-14 h-14 bg-teal-100 dark:bg-teal-900/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-bell text-2xl text-teal-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                        Notificações Inteligentes
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Receba alertas sobre novos conteúdos, prazos próximos e mensagens importantes. Nunca perca nada.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-20 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    Como Funciona
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Comece em 3 passos simples
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="text-center fade-in">
+                    <div class="w-20 h-20 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold text-white">1</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                        Crie sua Conta
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Cadastre-se gratuitamente em menos de 2 minutos. Escolha entre conta de aluno ou professor.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="text-center fade-in" style="animation-delay: 0.2s;">
+                    <div class="w-20 h-20 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold text-white">2</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                        Configure seu Espaço
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Professores criam cursos. Alunos se inscrevem e começam a aprender. Interface intuitiva e fácil.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="text-center fade-in" style="animation-delay: 0.4s;">
+                    <div class="w-20 h-20 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold text-white">3</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                        Comece a Ensinar ou Aprender
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Acesse conteúdos, participe de discussões e acompanhe seu progresso. Tudo em um só lugar.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-20 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    O que dizem nossos usuários
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg fade-in">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            MS
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-white">Maria Silva</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Professora de Matemática</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        "Revolucionou minha forma de ensinar! Agora consigo acompanhar o progresso de cada aluno individualmente."
+                    </p>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg fade-in" style="animation-delay: 0.2s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            JS
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-white">João Santos</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Estudante</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        "Plataforma incrível! Muito fácil de usar e me ajuda a organizar meus estudos. As notificações são muito úteis."
+                    </p>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg fade-in" style="animation-delay: 0.4s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            AC
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-white">Ana Costa</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Coordenadora Pedagógica</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        "A melhor ferramenta para gestão educacional. Centraliza tudo em um só lugar e facilita a comunicação."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-br from-teal-500 to-teal-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl lg:text-4xl font-bold mb-6">
+                Pronto para transformar seu ensino?
+            </h2>
+            <p class="text-xl mb-8 text-teal-100 max-w-2xl mx-auto">
+                Junte-se a milhares de educadores e alunos que já estão usando o LearnFlow
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/cadastro" class="bg-white text-teal-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition shadow-lg inline-block">
+                    Criar Conta Gratuita
+                </a>
+                <a href="/login" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-teal-600 transition inline-block">
+                    Já tenho conta
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    Perguntas Frequentes
+                </h2>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ 1 -->
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden">
+                    <button onclick="toggleFAQ(1)" class="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                        <span class="font-semibold text-gray-900 dark:text-white">O LearnFlow é gratuito?</span>
+                        <i id="faq-icon-1" class="fas fa-chevron-down text-teal-600"></i>
+                    </button>
+                    <div id="faq-content-1" class="hidden px-6 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Sim! O LearnFlow oferece um plano gratuito completo para professores e alunos. Planos premium com recursos avançados também estão disponíveis.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden">
+                    <button onclick="toggleFAQ(2)" class="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                        <span class="font-semibold text-gray-900 dark:text-white">Posso usar em dispositivos móveis?</span>
+                        <i id="faq-icon-2" class="fas fa-chevron-down text-teal-600"></i>
+                    </button>
+                    <div id="faq-content-2" class="hidden px-6 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Absolutamente! Nossa plataforma é totalmente responsiva e funciona perfeitamente em smartphones, tablets e computadores.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden">
+                    <button onclick="toggleFAQ(3)" class="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                        <span class="font-semibold text-gray-900 dark:text-white">Quantos cursos posso criar?</span>
+                        <i id="faq-icon-3" class="fas fa-chevron-down text-teal-600"></i>
+                    </button>
+                    <div id="faq-content-3" class="hidden px-6 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            No plano gratuito, você pode criar até 5 cursos. Nos planos premium, o limite é ilimitado.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden">
+                    <button onclick="toggleFAQ(4)" class="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                        <span class="font-semibold text-gray-900 dark:text-white">Como funciona o suporte?</span>
+                        <i id="faq-icon-4" class="fas fa-chevron-down text-teal-600"></i>
+                    </button>
+                    <div id="faq-content-4" class="hidden px-6 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Oferecemos suporte por email, chat e uma base de conhecimento completa com tutoriais e guias.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer/footer_auth') %>
+
+    <script>
+        function toggleFAQ(number) {
+            const content = document.getElementById(`faq-content-${number}`);
+            const icon = document.getElementById(`faq-icon-${number}`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Smooth scroll para âncoras
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+<%- include('../partials/scripts') %>

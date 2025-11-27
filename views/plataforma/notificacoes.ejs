@@ -1,0 +1,236 @@
+<!-- file: views/plataforma/notificacoes.ejs -->
+
+<%- include('../partials/header_app') %>
+
+<main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-bell"></i> Notificações
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-1">
+                    Acompanhe todas as suas notificações e configure suas preferências
+                </p>
+            </div>
+            
+            <button onclick="marcarTodasComoLidas()" 
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                <i class="fa-solid fa-check-double mr-2"></i> Marcar todas como lidas
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Coluna Principal - Notificações -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Recentes</h2>
+                    </div>
+                    
+                    <div id="lista-notificacoes" class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <!-- Notificações do servidor (SSR) -->
+                        <% if (notificacoes && notificacoes.length > 0) { %>
+                            <% notificacoes.forEach(function(notif) { %>
+                                <%- include('../partials/notificacao_item', { notif: notif }) %>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                    
+                    <!-- Mensagem vazia -->
+                    <% if (!notificacoes || notificacoes.length === 0) { %>
+                        <div id="msg-sem-notificacoes" class="p-8 text-center">
+                            <i class="fa-solid fa-bell-slash text-5xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">Você não tem notificações</p>
+                        </div>
+                    <% } %>
+                </div>
+                
+                <!-- Paginação -->
+                <% if (pagination && pagination.totalPages > 1) { %>
+                    <div class="flex justify-center gap-2">
+                        <% for (var i = 1; i <= pagination.totalPages; i++) { %>
+                            <a href="/notificacoes?page=<%= i %>" 
+                               class="px-4 py-2 rounded-lg <%= pagination.page === i ? 'bg-teal-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' %> transition">
+                                <%= i %>
+                            </a>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+            
+            <!-- Coluna Lateral - Configurações -->
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 sticky top-4">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                            <i class="fa-solid fa-gear mr-2"></i> Configurações
+                        </h2>
+                    </div>
+                    
+                    <div class="p-4 space-y-6">
+                        <!-- Métodos de Notificação -->
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                                Métodos de Notificação
+                            </h3>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fa-solid fa-envelope text-gray-500 dark:text-gray-400"></i>
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">Notificações por Email</span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fa-solid fa-mobile-screen text-gray-500 dark:text-gray-400"></i>
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">Notificações Push</span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tipos de Notificação -->
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                                Tipos de Notificação
+                            </h3>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Atividades</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Avisos</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Notas</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Mensagens</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Novos Cursos</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Resumo -->
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Resumo
+                            </h3>
+                            <div class="bg-teal-50 dark:bg-teal-900/20 rounded-lg p-3">
+                                <p class="text-xs text-teal-700 dark:text-teal-300 font-medium mb-1">
+                                    <%= naoLidas > 0 ? naoLidas + ' não lida' + (naoLidas > 1 ? 's' : '') : 'Todas marcadas como lidas' %>
+                                </p>
+                                <p class="text-xs text-teal-600 dark:text-teal-400">
+                                    <%= naoLidas > 0 ? 'Você tem notificações pendentes.' : 'Todas as notificações foram marcadas como lidas.' %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+// Marcar todas como lidas
+async function marcarTodasComoLidas() {
+    try {
+        var res = await fetch('/notificacoes/api/ler-todas', { 
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (res.ok) {
+            alert('Todas as notificações foram marcadas como lidas');
+            window.location.reload();
+        } else {
+            alert('Erro ao marcar notificações');
+        }
+    } catch (err) {
+        console.error('Erro:', err);
+        alert('Erro ao conectar com o servidor');
+    }
+}
+
+// Marcar como lida ao clicar
+async function marcarComoLida(id, link) {
+    try {
+        await fetch('/notificacoes/api/' + id + '/ler', { 
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (link) {
+            window.location.href = link;
+        } else {
+            window.location.reload();
+        }
+    } catch (err) {
+        console.error('Erro:', err);
+    }
+}
+
+// Deletar notificação
+async function deletarNotificacao(event, id) {
+    event.stopPropagation();
+    
+    if (!confirm('Deseja deletar esta notificação?')) return;
+    
+    try {
+        var res = await fetch('/notificacoes/api/' + id, { method: 'DELETE' });
+        
+        if (res.ok) {
+            window.location.reload();
+        } else {
+            alert('Erro ao deletar notificação');
+        }
+    } catch (err) {
+        console.error('Erro:', err);
+        alert('Erro ao conectar com o servidor');
+    }
+}
+</script>
+
+<%- include('../partials/footer_app') %>

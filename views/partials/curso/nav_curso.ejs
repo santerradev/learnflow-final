@@ -1,0 +1,37 @@
+<!-- file: views/partials/curso/nav_curso.ejs -->
+<!-- Navegação interna do curso -->
+
+<nav class="flex justify-center mb-6">
+    <div class="flex flex-wrap justify-center gap-1 p-1 bg-gray-200 dark:bg-gray-700 rounded-lg">
+        <a href="/cursos/<%= curso.id %>/mural" 
+           class="course-nav-link py-2 px-3 sm:px-4 rounded-md text-sm font-medium transition
+                  <%= activeTab === 'mural' ? 'bg-white dark:bg-gray-600 text-teal-600 dark:text-teal-400 shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600' %>">
+            <i class="fa-solid fa-comments mr-1 sm:mr-2"></i>
+            <span class="hidden xs:inline">Mural</span>
+        </a>
+        <a href="/cursos/<%= curso.id %>/aulas" 
+           class="course-nav-link py-2 px-3 sm:px-4 rounded-md text-sm font-medium transition
+                  <%= activeTab === 'aulas' ? 'bg-white dark:bg-gray-600 text-teal-600 dark:text-teal-400 shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600' %>">
+            <i class="fa-solid fa-play-circle mr-1 sm:mr-2"></i>
+            <span class="hidden xs:inline">Aulas</span>
+        </a>
+        <a href="/cursos/<%= curso.id %>/atividades" 
+           class="course-nav-link py-2 px-3 sm:px-4 rounded-md text-sm font-medium transition
+                  <%= activeTab === 'atividades' ? 'bg-white dark:bg-gray-600 text-teal-600 dark:text-teal-400 shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600' %>">
+            <i class="fa-solid fa-file-lines mr-1 sm:mr-2"></i>
+            <span class="hidden xs:inline">Atividades</span>
+        </a>
+        <a href="/cursos/<%= curso.id %>/materiais" 
+           class="course-nav-link py-2 px-3 sm:px-4 rounded-md text-sm font-medium transition
+                  <%= activeTab === 'materiais' ? 'bg-white dark:bg-gray-600 text-teal-600 dark:text-teal-400 shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600' %>">
+            <i class="fa-solid fa-folder-open mr-1 sm:mr-2"></i>
+            <span class="hidden xs:inline">Materiais</span>
+        </a>
+        <a href="/cursos/<%= curso.id %>/pessoas" 
+           class="course-nav-link py-2 px-3 sm:px-4 rounded-md text-sm font-medium transition
+                  <%= activeTab === 'pessoas' ? 'bg-white dark:bg-gray-600 text-teal-600 dark:text-teal-400 shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600' %>">
+            <i class="fa-solid fa-users mr-1 sm:mr-2"></i>
+            <span class="hidden xs:inline">Pessoas</span>
+        </a>
+    </div>
+</nav>

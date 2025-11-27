@@ -1,0 +1,306 @@
+<!-- file: views/user/profile.ejs -->
+
+<%- include('../partials/header') %>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="icon-edit" viewBox="0 0 16 16">
+    <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+  </symbol>
+  <symbol id="icon-cancel" viewBox="0 0 16 16">
+    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+  </symbol>
+  <symbol id="icon-save" viewBox="0 0 16 16">
+    <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v4.5h2a.5.5 0 0 1 .354.854l-2.5 2.5a.5.5 0 0 1-.708 0l-2.5-2.5A.5.5 0 0 1 5.5 6.5h2V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
+  </symbol>
+  <symbol id="icon-mail" viewBox="0 0 16 16">
+    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105 5.708 8.28 1 5.383v5.722Z"/>
+  </symbol>
+  <symbol id="icon-calendar" viewBox="0 0 16 16">
+    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+  </symbol>
+  <symbol id="icon-building" viewBox="0 0 16 16">
+    <path d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-6 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-6 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Z"/>
+    <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V1Zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3V1Z"/>
+  </symbol>
+</svg>
+
+<div class="bg-gray-50 min-h-screen p-8">
+  <div class="max-w-6xl mx-auto">
+    
+    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Meu Perfil</h1>
+        <p class="text-gray-600">Gerencie suas informações pessoais e configurações</p>
+      </div>
+      <div>
+        <button id="btnEditar" class="flex w-full sm:w-auto justify-center items-center gap-2 px-4 py-2 bg-blue-600 rounded-lg text-sm font-medium text-white hover:bg-blue-700">
+          <svg class="w-4 h-4" fill="currentColor"><use xlink:href="#icon-edit"></use></svg>
+          Editar Perfil
+        </button>
+        <div id="botoesEdicao" class="flex gap-3 hidden w-full sm:w-auto">
+          <button id="btnCancelar" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <svg class="w-4 h-4" fill="currentColor"><use xlink:href="#icon-cancel"></use></svg>
+            Cancelar
+          </button>
+          <button id="btnSalvar" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-green-600 rounded-lg text-sm font-medium text-white hover:bg-green-700">
+            <svg class="w-4 h-4" fill="currentColor"><use xlink:href="#icon-save"></use></svg>
+            Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="alertContainer" class="mb-4"></div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <div class="md:col-span-1">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center text-center">
+          
+          <div class="w-28 h-28 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-5xl font-semibold mb-4">
+            <%= helpers.getInitials(user.nome) %>
+          </div>
+
+          <h2 class="text-2xl font-semibold text-gray-900 break-words" id="displayNomeSidebar"><%= user.nome %></h2>
+          
+          <p class="text-gray-600 mb-4"><%= helpers.formatRole(user.tipoUsuario) %></p>
+          
+          <span class="mt-1 px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium border border-gray-200 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor"><use xlink:href="#icon-building"></use></svg>
+            <%= helpers.formatInstituicao(user.instituicao, user.tipoUsuario) %>
+          </span>
+          
+          <hr class="w-full my-6 border-t border-gray-200" />
+          
+          <div class="text-left w-full space-y-3">
+            <div class="flex items-center gap-3 text-gray-600">
+              <svg class="w-4 h-4" fill="currentColor"><use xlink:href="#icon-mail"></use></svg>
+              <span class="text-sm break-all" id="displayEmailSidebar"><%= user.email %></span>
+            </div>
+            
+            <div class="flex items-center gap-3 text-gray-600">
+              <svg class="w-4 h-4" fill="currentColor"><use xlink:href="#icon-calendar"></use></svg>
+              <span class="text-sm">Membro desde <%= helpers.formatData(user.createdAt) %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 space-y-8">
+        
+        <div id="formPerfil" class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h3 class="text-xl font-semibold text-gray-900 mb-5">Informações Pessoais</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+              <input type="text" name="nome" id="inputNome" value="<%= user.nome %>" 
+                     disabled 
+                     class="campo-perfil block w-full rounded-lg shadow-sm sm:text-sm p-3 border">
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email" name="email" id="inputEmail" value="<%= user.email %>" 
+                     disabled 
+                     class="campo-perfil block w-full rounded-lg shadow-sm sm:text-sm p-3 border">
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h3 class="text-xl font-semibold text-gray-900 mb-5">Informações Profissionais</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="instituicao" class="block text-sm font-medium text-gray-700 mb-1">Instituição</label>
+              <input type="text" name="instituicao" id="instituicao" 
+                     value="<%= helpers.formatInstituicao(user.instituicao, user.tipoUsuario) %>" 
+                     disabled 
+                     class="campo-perfil block w-full rounded-lg shadow-sm sm:text-sm p-3 border">
+            </div>
+            <div>
+              <label for="cargo" class="block text-sm font-medium text-gray-700 mb-1">Cargo</label>
+              <input type="text" name="cargo" id="cargo" 
+                     value="<%= helpers.formatRole(user.tipoUsuario) %>" 
+                     disabled 
+                     class="campo-perfil block w-full rounded-lg shadow-sm sm:text-sm p-3 border">
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h3 class="text-xl font-semibold text-gray-900 mb-5">Estatísticas</h3>
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p class="text-4xl font-bold text-blue-600"><%= stats.value1 %></p>
+              <p class="text-sm text-gray-600 mt-1"><%= stats.label1 %></p>
+            </div>
+            <div>
+              <p class="text-4xl font-bold text-blue-600"><%= stats.value2 %></p>
+              <p class="text-sm text-gray-600 mt-1"><%= stats.label2 %></p>
+            </div>
+            <div>
+              <p class="text-4xl font-bold text-blue-600"><%= stats.value3 %></p>
+              <p class="text-sm text-gray-600 mt-1"><%= stats.label3 %></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Seletores dos Elementos
+    const btnEditar = document.getElementById('btnEditar');
+    const botoesEdicao = document.getElementById('botoesEdicao');
+    const btnCancelar = document.getElementById('btnCancelar');
+    const btnSalvar = document.getElementById('btnSalvar');
+    
+    const inputNome = document.getElementById('inputNome');
+    const inputEmail = document.getElementById('inputEmail');
+    
+    // Seletores dos campos da Sidebar (para resetar no cancelamento e atualizar no save)
+    const displayNomeSidebar = document.getElementById('displayNomeSidebar');
+    const displayEmailSidebar = document.getElementById('displayEmailSidebar');
+
+    const alertContainer = document.getElementById('alertContainer');
+    
+    // Classes Tailwind para os estados dos inputs
+    const disabledStyles = ['bg-gray-100', 'text-gray-500', 'cursor-not-allowed', 'border-gray-200'];
+    const enabledStyles = ['bg-white', 'text-gray-900', 'border-gray-300', 'focus:border-blue-500', 'focus:ring-1', 'focus:ring-blue-500'];
+
+    /**
+     * Aplica o estilo "apagado" a todos os campos de perfil no carregamento.
+     * Esta é a regra de "tom de cor levemente apagado/mais claro".
+     */
+    function aplicarEstilosBloqueadosPadrao() {
+      document.querySelectorAll('.campo-perfil').forEach(campo => {
+        // Aplica o estilo "disabled" a todos os campos por padrão
+        campo.classList.add(...disabledStyles);
+        campo.classList.remove(...enabledStyles);
+      });
+    }
+    
+    // Aplicar estilos "apagados" no carregamento da página
+    aplicarEstilosBloqueadosPadrao();
+
+    /**
+     * Alterna a UI entre o modo de visualização e o modo de edição.
+     * @param {boolean} editing - True para entrar no modo de edição, false para visualização.
+     */
+    function toggleModoEdicao(editing) {
+      if (editing) {
+        // Alterna botões
+        btnEditar.classList.add('hidden');
+        botoesEdicao.classList.remove('hidden');
+        
+        // Habilita campos editáveis (Nome e Email)
+        [inputNome, inputEmail].forEach(campo => {
+          campo.disabled = false;
+          campo.classList.remove(...disabledStyles);
+          campo.classList.add(...enabledStyles);
+        });
+      } else {
+        // Alterna botões
+        btnEditar.classList.remove('hidden');
+        botoesEdicao.classList.add('hidden');
+        
+        // Desabilita campos editáveis e aplica estilo "apagado"
+        [inputNome, inputEmail].forEach(campo => {
+          campo.disabled = true;
+          campo.classList.add(...disabledStyles);
+          campo.classList.remove(...enabledStyles);
+        });
+      }
+    }
+
+    /**
+     * Exibe um alerta na tela (sucesso ou erro).
+     * @param {string} message - A mensagem a ser exibida.
+     * @param {string} type - 'error' (vermelho) ou 'success' (verde).
+     */
+    function showAlert(message, type = 'error') {
+      const bgColor = type === 'error' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700';
+      alertContainer.innerHTML = `
+        <div class="${bgColor} border px-4 py-3 rounded relative" role="alert">
+          <span class="block sm:inline">${message}</span>
+          <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.remove()">
+             <svg class="fill-current h-6 w-6 ${type === 'error' ? 'text-red-500' : 'text-green-500'}" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Fechar</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+          </button>
+        </div>
+      `;
+      // Limpa o alerta após 5 segundos (opcional, adicionei botão de fechar)
+      // setTimeout(() => {
+      //   if (alertContainer.firstChild) alertContainer.firstChild.remove();
+      // }, 5000);
+    }
+
+    // --- Event Listeners ---
+
+    // 1. Clicar em "Editar Perfil"
+    btnEditar.addEventListener('click', () => {
+      toggleModoEdicao(true);
+      alertContainer.innerHTML = ''; // Limpa alertas antigos
+    });
+
+    // 2. Clicar em "Cancelar"
+    btnCancelar.addEventListener('click', () => {
+      // Reseta os valores dos inputs para os valores originais (armazenados na sidebar)
+      inputNome.value = displayNomeSidebar.textContent.trim();
+      inputEmail.value = displayEmailSidebar.textContent.trim();
+      toggleModoEdicao(false);
+    });
+
+    // 3. Clicar em "Salvar"
+    btnSalvar.addEventListener('click', async () => {
+      // Desabilitar botões para evitar cliques duplos
+      btnSalvar.disabled = true;
+      btnSalvar.innerHTML = 'Salvando...';
+      btnCancelar.disabled = true;
+
+      const nome = inputNome.value;
+      const email = inputEmail.value;
+
+      try {
+        // Envia para a rota PATCH /user/perfil 
+        // (Assumindo que 'userRoutes.js' está montado em '/user' no seu app.js)
+        const response = await fetch('/user/perfil', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            // Se você usa CSRF, adicione o token aqui
+          },
+          body: JSON.stringify({ nome, email }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          // Exibe a mensagem de erro vinda da API (ex: "Email já em uso")
+          throw new Error(data.message || 'Erro ao salvar.');
+        }
+
+        // Sucesso! Atualizar a UI com os novos dados
+        displayNomeSidebar.textContent = data.nome;
+        displayEmailSidebar.textContent = data.email;
+        inputNome.value = data.nome;
+        inputEmail.value = data.email;
+        
+        toggleModoEdicao(false);
+        showAlert('Perfil atualizado com sucesso!', 'success');
+
+      } catch (error) {
+        console.error('Erro ao salvar:', error);
+        showAlert(error.message, 'error');
+      } finally {
+        // Reabilitar botões
+        btnSalvar.disabled = false;
+        btnSalvar.innerHTML = `<svg class="w-4 h-4" fill="currentColor"><use xlink:href="#icon-save"></use></svg> Salvar`;
+        btnCancelar.disabled = false;
+      }
+    });
+  });
+</script>
+
+<%- include('../partials/footer') %>

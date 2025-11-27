@@ -1,0 +1,71 @@
+<!-- file: views/partials/notificacao_item.ejs -->
+
+<%
+// Configurar ícone e cor baseado no tipo
+var icone = 'fa-bell';
+var corBg = 'bg-gray-100 dark:bg-gray-700';
+var corText = 'text-gray-600 dark:text-gray-400';
+
+if (notif.tipo === 'nova_aula') {
+    icone = 'fa-video';
+    corBg = 'bg-blue-100 dark:bg-blue-900';
+    corText = 'text-blue-600 dark:text-blue-400';
+} else if (notif.tipo === 'nova_atividade') {
+    icone = 'fa-clipboard-check';
+    corBg = 'bg-purple-100 dark:bg-purple-900';
+    corText = 'text-purple-600 dark:text-purple-400';
+} else if (notif.tipo === 'prazo') {
+    icone = 'fa-clock';
+    corBg = 'bg-orange-100 dark:bg-orange-900';
+    corText = 'text-orange-600 dark:text-orange-400';
+} else if (notif.tipo === 'aviso') {
+    icone = 'fa-exclamation-triangle';
+    corBg = 'bg-red-100 dark:bg-red-900';
+    corText = 'text-red-600 dark:text-red-400';
+}
+
+// Verificar se é lida (compatível com 'lida' boolean ou 'status' enum)
+var estaLida = notif.lida === true || notif.status === 'lida';
+
+// Formatar data
+var dataNotif = new Date(notif.data_envio || notif.data_criacao);
+var agora = new Date();
+var diff = Math.floor((agora - dataNotif) / 1000);
+var tempoRelativo = '';
+
+if (diff < 60) tempoRelativo = 'Agora';
+else if (diff < 3600) tempoRelativo = Math.floor(diff / 60) + ' minutos atrás';
+else if (diff < 86400) tempoRelativo = Math.floor(diff / 3600) + ' horas atrás';
+else if (diff < 604800) tempoRelativo = Math.floor(diff / 86400) + ' dias atrás';
+else tempoRelativo = dataNotif.toLocaleDateString('pt-BR');
+%>
+
+<div class="notificacao-item p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition cursor-pointer relative <%= estaLida ? '' : 'bg-blue-50 dark:bg-blue-900/10' %>"
+     onclick="marcarComoLida(<%= notif.id %>, '<%= notif.link || '' %>')">
+    <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full <%= corBg %> <%= corText %> flex items-center justify-center">
+            <i class="fa-solid <%= icone %>"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2 mb-1">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white"><%= notif.titulo %></h3>
+                <% if (!estaLida) { %>
+                    <span class="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full"></span>
+                <% } %>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2"><%= notif.mensagem %></p>
+            <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                <span><%= tempoRelativo %></span>
+            </div>
+        </div>
+        <div class="flex-shrink-0 flex items-center gap-2">
+            <% if (notif.link) { %>
+                <i class="fa-solid fa-external-link text-gray-400"></i>
+            <% } %>
+            <button onclick="deletarNotificacao(event, <%= notif.id %>)" 
+                    class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                <i class="fa-solid fa-trash text-sm"></i>
+            </button>
+        </div>
+    </div>
+</div>

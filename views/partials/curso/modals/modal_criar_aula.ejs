@@ -1,0 +1,315 @@
+<!-- file: views/partials/curso/modals/modal_criar_aula.ejs -->
+
+<div id="modal-criar-aula" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Nova Aula</h2>
+                <button type="button" onclick="toggleModal('modal-criar-aula', false)" 
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Formulário -->
+            <form id="form-criar-aula" enctype="multipart/form-data" class="space-y-4">
+                <div>
+                    <label for="aula-titulo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Título da Aula *
+                    </label>
+                    <input type="text" 
+                           id="aula-titulo" 
+                           name="titulo"
+                           required
+                           placeholder="Ex: Introdução ao JavaScript"
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                
+                <div>
+                    <label for="aula-descricao" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Descrição
+                    </label>
+                    <textarea id="aula-descricao" 
+                              name="descricao"
+                              rows="3"
+                              placeholder="Descreva o conteúdo desta aula..."
+                              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="aula-lista" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Lista (opcional)
+                        </label>
+                        <select id="aula-lista" 
+                                name="lista_id"
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            <option value="">Sem lista</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="aula-prazo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Data Prazo (opcional)
+                        </label>
+                        <input type="datetime-local" 
+                               id="aula-prazo" 
+                               name="data_prazo"
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="aula-duracao" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Duração (minutos)
+                    </label>
+                    <input type="number" 
+                           id="aula-duracao" 
+                           name="duracao"
+                           min="1"
+                           placeholder="Ex: 15"
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                
+                <!-- Upload de Vídeo -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Vídeo da Aula *
+                    </label>
+                    <input type="file" 
+                           id="aula-video" 
+                           name="video"
+                           accept="video/mp4,video/avi,video/mov,video/mkv,video/webm"
+                           required
+                           class="hidden">
+                    <div class="flex items-center gap-3">
+                        <label for="aula-video" 
+                               class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-gray-700 hover:bg-teal-100 dark:hover:bg-gray-600 transition">
+                            <i class="fa-solid fa-video mr-2"></i> Escolher Vídeo
+                        </label>
+                        <span id="video-nome" class="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">Nenhum arquivo escolhido</span>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Formatos aceitos: MP4, AVI, MOV, MKV, WEBM (máx. 500MB)</p>
+                </div>
+                
+                <!-- Upload de Capa -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Capa da Aula (opcional)
+                    </label>
+                    <input type="file" 
+                           id="aula-capa" 
+                           name="capa_aula"
+                           accept="image/*"
+                           class="hidden">
+                    <div class="flex items-center gap-3">
+                        <label for="aula-capa" 
+                               class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+                            <i class="fa-solid fa-image mr-2"></i> Escolher Imagem
+                        </label>
+                        <span id="capa-nome" class="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">Nenhum arquivo escolhido</span>
+                    </div>
+                    <div id="capa-preview" class="mt-2 hidden">
+                        <img src="" alt="Preview" class="h-24 w-auto rounded-lg object-cover">
+                    </div>
+                </div>
+                
+                <!-- Botões -->
+                <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" 
+                            onclick="toggleModal('modal-criar-aula', false)"
+                            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            id="btn-criar-aula"
+                            class="px-4 py-2 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white rounded-lg transition">
+                        Criar Aula
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var modalAula = document.getElementById('modal-criar-aula');
+    var form = document.getElementById('form-criar-aula');
+    var submitting = false; // Flag para prevenir múltiplos submits
+    
+    // Carregar listas ao abrir o modal
+    async function carregarListasParaAula() {
+        try {
+            var res = await fetch('/cursos/' + cursoId + '/listas');
+            
+            if (!res.ok) {
+                console.error('Erro ao carregar listas:', res.status);
+                return;
+            }
+            
+            var listas = await res.json();
+            
+            var select = document.getElementById('aula-lista');
+            if (select) {
+                select.innerHTML = '<option value="">Sem lista</option>';
+                
+                listas.forEach(function(lista) {
+                    var option = document.createElement('option');
+                    option.value = lista.id;
+                    option.textContent = lista.titulo;
+                    select.appendChild(option);
+                });
+                
+                console.log('Listas carregadas para aula:', listas.length);
+            }
+        } catch (err) {
+            console.error('Erro ao carregar listas:', err);
+        }
+    }
+
+    // Atualizar nome do arquivo de vídeo
+    var inputVideo = document.getElementById('aula-video');
+    if (inputVideo) {
+        inputVideo.addEventListener('change', function() {
+            var span = document.getElementById('video-nome');
+            if (this.files && this.files[0]) {
+                var file = this.files[0];
+                span.textContent = file.name;
+                
+                // Validar tamanho (500MB)
+                var maxSize = 500 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert('O vídeo é muito grande. Tamanho máximo: 500MB');
+                    this.value = '';
+                    span.textContent = 'Nenhum arquivo escolhido';
+                }
+            }
+        });
+    }
+
+    // Atualizar nome e preview da capa
+    var inputCapa = document.getElementById('aula-capa');
+    if (inputCapa) {
+        inputCapa.addEventListener('change', function() {
+            var span = document.getElementById('capa-nome');
+            var preview = document.getElementById('capa-preview');
+            
+            if (this.files && this.files[0]) {
+                var file = this.files[0];
+                span.textContent = file.name;
+                
+                // Validar tamanho (5MB)
+                var maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert('A imagem é muito grande. Tamanho máximo: 5MB');
+                    this.value = '';
+                    span.textContent = 'Nenhum arquivo escolhido';
+                    preview.classList.add('hidden');
+                    return;
+                }
+                
+                // Mostrar preview
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.classList.remove('hidden');
+                    preview.querySelector('img').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.classList.add('hidden');
+            }
+        });
+    }
+
+    // Submit do formulário
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Prevenir múltiplos submits
+            if (submitting) {
+                console.log('Já está enviando aula...');
+                return;
+            }
+            
+            // Validar se o vídeo foi selecionado
+            var videoInput = document.getElementById('aula-video');
+            if (!videoInput.files || !videoInput.files[0]) {
+                alert('Por favor, selecione um vídeo para a aula.');
+                return;
+            }
+            
+            submitting = true;
+            
+            var btn = document.getElementById('btn-criar-aula');
+            var btnTextoOriginal = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+            
+            var formData = new FormData(this);
+            
+            try {
+                var res = await fetch('/cursos/' + cursoId + '/aulas', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                var data = await res.json();
+                
+                if (res.ok) {
+                    alert('Aula criada com sucesso!');
+                    toggleModal('modal-criar-aula', false);
+                    
+                    // Aguardar um pouco antes de recarregar
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 500);
+                } else {
+                    alert(data.error || 'Erro ao criar aula.');
+                    btn.disabled = false;
+                    btn.innerHTML = btnTextoOriginal;
+                    submitting = false;
+                }
+            } catch (err) {
+                console.error('Erro:', err);
+                alert('Erro ao conectar com o servidor.');
+                btn.disabled = false;
+                btn.innerHTML = btnTextoOriginal;
+                submitting = false;
+            }
+        });
+    }
+
+    // Observar quando o modal abrir para carregar as listas
+    if (modalAula) {
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    if (!modalAula.classList.contains('hidden')) {
+                        // Modal foi aberto
+                        carregarListasParaAula();
+                        
+                        // Reset do formulário
+                        submitting = false;
+                        
+                        if (form) {
+                            form.reset();
+                            
+                            var videoNome = document.getElementById('video-nome');
+                            var capaNome = document.getElementById('capa-nome');
+                            var capaPreview = document.getElementById('capa-preview');
+                            
+                            if (videoNome) videoNome.textContent = 'Nenhum arquivo escolhido';
+                            if (capaNome) capaNome.textContent = 'Nenhum arquivo escolhido';
+                            if (capaPreview) capaPreview.classList.add('hidden');
+                        }
+                    }
+                }
+            });
+        });
+        observer.observe(modalAula, { attributes: true });
+    }
+})();
+</script>

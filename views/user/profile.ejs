@@ -1,0 +1,428 @@
+<!-- file: views/user/profile.ejs -->
+
+<%- include('../partials/header_app') %>
+
+<main class="flex-1 overflow-y-auto">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-8">
+        
+        <!-- Cabeçalho da Página -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Meu Perfil</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Gerencie suas informações pessoais</p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Coluna Esquerda - Card do Perfil -->
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    
+                    <!-- Banner de fundo -->
+                    <div class="h-24 bg-gradient-to-r from-teal-500 to-teal-600"></div>
+                    
+                    <!-- Foto e Info Principal -->
+                    <div class="px-6 pb-6">
+                        <div class="relative -mt-12 mb-4">
+                            <% if (user.foto_perfil) { %>
+                                <img src="/uploads/images/<%= user.foto_perfil %>" 
+                                     alt="<%= user.nome %>" 
+                                     class="w-24 h-24 rounded-full border-4 border-white dark:border-gray-800 object-cover shadow-lg">
+                            <% } else { %>
+                                <div class="w-24 h-24 rounded-full border-4 border-white dark:border-gray-800 bg-teal-100 dark:bg-teal-900 flex items-center justify-center shadow-lg">
+                                    <span class="text-3xl font-bold text-teal-600 dark:text-teal-300">
+                                        <%= helpers.getInitials(user.nome) %>
+                                    </span>
+                                </div>
+                            <% } %>
+                            
+                            <!-- Badge de Status -->
+                            <span class="absolute bottom-1 right-1 w-5 h-5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full" title="Online"></span>
+                        </div>
+                        
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white"><%= user.nome %></h2>
+                        
+                        <!-- Badge do Tipo de Usuário -->
+                        <div class="mt-2">
+                            <% if (user.tipo === 'administrador') { %>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                                    <i class="fa-solid fa-shield-halved mr-1.5"></i> Administrador
+                                </span>
+                            <% } else if (user.tipo === 'professor') { %>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                    <i class="fa-solid fa-chalkboard-teacher mr-1.5"></i> Professor
+                                </span>
+                            <% } else { %>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200">
+                                    <i class="fa-solid fa-user-graduate mr-1.5"></i> Estudante
+                                </span>
+                            <% } %>
+                        </div>
+                        
+                        <!-- Informações de Contato -->
+                        <div class="mt-6 space-y-3">
+                            <div class="flex items-center text-gray-600 dark:text-gray-400">
+                                <i class="fa-solid fa-building w-5 text-center mr-3 text-gray-400"></i>
+                                <span class="text-sm"><%= helpers.formatInstituicao(user.instituicao, user.tipo) %></span>
+                            </div>
+                            <div class="flex items-center text-gray-600 dark:text-gray-400">
+                                <i class="fa-solid fa-envelope w-5 text-center mr-3 text-gray-400"></i>
+                                <span class="text-sm truncate"><%= user.email %></span>
+                            </div>
+                            <div class="flex items-center text-gray-600 dark:text-gray-400">
+                                <i class="fa-solid fa-calendar w-5 text-center mr-3 text-gray-400"></i>
+                                <span class="text-sm">Membro desde <%= helpers.formatData(user.data_cadastro) %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card de Estatísticas -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        <i class="fa-solid fa-chart-simple mr-2 text-teal-500"></i> Estatísticas
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400"><%= stats.label1 %></span>
+                            <span class="text-2xl font-bold text-teal-600 dark:text-teal-400"><%= stats.value1 %></span>
+                        </div>
+                        <div class="border-t border-gray-200 dark:border-gray-700"></div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400"><%= stats.label2 %></span>
+                            <span class="text-2xl font-bold text-teal-600 dark:text-teal-400"><%= stats.value2 %></span>
+                        </div>
+                        <div class="border-t border-gray-200 dark:border-gray-700"></div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400"><%= stats.label3 %></span>
+                            <span class="text-2xl font-bold text-teal-600 dark:text-teal-400"><%= stats.value3 %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Coluna Direita - Formulários -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Card de Informações Pessoais -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                            <i class="fa-solid fa-user mr-2 text-teal-500"></i> Informações Pessoais
+                        </h3>
+                        <button type="button" 
+                                id="btn-editar-pessoais"
+                                onclick="toggleEdicao('pessoais')"
+                                class="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 text-sm font-medium">
+                            <i class="fa-solid fa-pen mr-1"></i> Editar
+                        </button>
+                    </div>
+                    
+                    <form id="form-pessoais" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Nome Completo
+                                </label>
+                                <input type="text" 
+                                       id="input-nome"
+                                       name="nome"
+                                       value="<%= user.nome %>"
+                                       disabled
+                                       class="input-editavel w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    E-mail
+                                </label>
+                                <input type="email" 
+                                       id="input-email"
+                                       name="email"
+                                       value="<%= user.email %>"
+                                       disabled
+                                       class="input-editavel w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            </div>
+                        </div>
+                        
+                        <!-- Botões de Ação (aparecem ao editar) -->
+                        <div id="btns-pessoais" class="hidden flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <button type="button" 
+                                    onclick="cancelarEdicao('pessoais')"
+                                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                    id="btn-salvar-pessoais"
+                                    class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition">
+                                <i class="fa-solid fa-check mr-1"></i> Salvar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Card de Informações Profissionais -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+                        <i class="fa-solid fa-briefcase mr-2 text-teal-500"></i> Informações Profissionais
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Tipo de Conta
+                            </label>
+                            <input type="text" 
+                                   value="<%= helpers.formatRole(user.tipo) %>"
+                                   disabled
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Instituição
+                            </label>
+                            <input type="text" 
+                                   value="<%= helpers.formatInstituicao(user.instituicao, user.tipo) %>"
+                                   disabled
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Status da Conta
+                            </label>
+                            <div class="flex items-center px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700">
+                                <span class="w-2.5 h-2.5 rounded-full mr-2 <%= user.status === 'ativo' ? 'bg-green-500' : 'bg-red-500' %>"></span>
+                                <span class="text-gray-500 dark:text-gray-400 capitalize"><%= user.status %></span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Membro Desde
+                            </label>
+                            <input type="text" 
+                                   value="<%= new Date(user.data_cadastro).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) %>"
+                                   disabled
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-4">
+                        <i class="fa-solid fa-info-circle mr-1"></i>
+                        Essas informações não podem ser alteradas. Entre em contato com o administrador se precisar de alterações.
+                    </p>
+                </div>
+                
+                <!-- Card de Alterar Foto -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+                        <i class="fa-solid fa-camera mr-2 text-teal-500"></i> Foto de Perfil
+                    </h3>
+                    
+                    <div class="flex items-center gap-6">
+                        <div class="flex-shrink-0">
+                            <% if (user.foto_perfil) { %>
+                                <img id="foto-preview" 
+                                     src="/uploads/images/<%= user.foto_perfil %>" 
+                                     alt="Foto atual" 
+                                     class="w-20 h-20 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600">
+                            <% } else { %>
+                                <div id="foto-preview" 
+                                     class="w-20 h-20 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center border-2 border-gray-200 dark:border-gray-600">
+                                    <span class="text-2xl font-bold text-teal-600 dark:text-teal-300">
+                                        <%= helpers.getInitials(user.nome) %>
+                                    </span>
+                                </div>
+                            <% } %>
+                        </div>
+                        
+                        <div class="flex-1">
+                            <form id="form-foto" enctype="multipart/form-data">
+                                <input type="file" 
+                                       id="input-foto" 
+                                       name="foto_perfil"
+                                       accept="image/*"
+                                       class="hidden">
+                                <div class="flex flex-wrap gap-3">
+                                    <label for="input-foto" 
+                                           class="cursor-pointer inline-flex items-center px-4 py-2 border border-teal-600 text-teal-600 dark:border-teal-400 dark:text-teal-400 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20 transition text-sm font-medium">
+                                        <i class="fa-solid fa-upload mr-2"></i> Escolher Foto
+                                    </label>
+                                    <button type="submit" 
+                                            id="btn-salvar-foto"
+                                            disabled
+                                            class="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <i class="fa-solid fa-check mr-2"></i> Salvar Foto
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                    JPG, PNG ou GIF. Máximo 5MB.
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+// Dados originais para cancelamento
+var dadosOriginais = {
+    nome: '<%= user.nome %>',
+    email: '<%= user.email %>'
+};
+
+// Toggle modo de edição
+function toggleEdicao(secao) {
+    var inputs = document.querySelectorAll('#form-' + secao + ' .input-editavel');
+    var btns = document.getElementById('btns-' + secao);
+    var btnEditar = document.getElementById('btn-editar-' + secao);
+    
+    inputs.forEach(function(input) {
+        input.disabled = !input.disabled;
+        if (!input.disabled) {
+            input.classList.remove('bg-gray-50', 'opacity-60');
+            input.classList.add('bg-white', 'dark:bg-gray-600');
+        } else {
+            input.classList.add('bg-gray-50', 'opacity-60');
+            input.classList.remove('bg-white', 'dark:bg-gray-600');
+        }
+    });
+    
+    btns.classList.toggle('hidden');
+    btnEditar.classList.toggle('hidden');
+    
+    // Focar no primeiro input
+    if (!inputs[0].disabled) {
+        inputs[0].focus();
+    }
+}
+
+// Cancelar edição
+function cancelarEdicao(secao) {
+    // Restaurar valores originais
+    document.getElementById('input-nome').value = dadosOriginais.nome;
+    document.getElementById('input-email').value = dadosOriginais.email;
+    
+    // Voltar ao modo visualização
+    var inputs = document.querySelectorAll('#form-' + secao + ' .input-editavel');
+    var btns = document.getElementById('btns-' + secao);
+    var btnEditar = document.getElementById('btn-editar-' + secao);
+    
+    inputs.forEach(function(input) {
+        input.disabled = true;
+        input.classList.add('bg-gray-50', 'opacity-60');
+        input.classList.remove('bg-white', 'dark:bg-gray-600');
+    });
+    
+    btns.classList.add('hidden');
+    btnEditar.classList.remove('hidden');
+}
+
+// Submit do formulário de informações pessoais
+document.getElementById('form-pessoais').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    var btn = document.getElementById('btn-salvar-pessoais');
+    var btnTexto = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Salvando...';
+    
+    var dados = {
+        nome: document.getElementById('input-nome').value,
+        email: document.getElementById('input-email').value
+    };
+    
+    try {
+        var res = await fetch('/user/perfil', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dados)
+        });
+        
+        var data = await res.json();
+        
+        if (res.ok) {
+            // Atualizar dados originais
+            dadosOriginais.nome = dados.nome;
+            dadosOriginais.email = dados.email;
+            
+            alert('Perfil atualizado com sucesso!');
+            window.location.reload();
+        } else {
+            alert(data.message || 'Erro ao atualizar perfil.');
+        }
+    } catch (err) {
+        console.error('Erro:', err);
+        alert('Erro ao conectar com o servidor.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = btnTexto;
+    }
+});
+
+// Preview da foto
+document.getElementById('input-foto').addEventListener('change', function() {
+    var btnSalvar = document.getElementById('btn-salvar-foto');
+    var preview = document.getElementById('foto-preview');
+    
+    if (this.files && this.files[0]) {
+        btnSalvar.disabled = false;
+        
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            // Se for uma div (sem foto), substituir por img
+            if (preview.tagName === 'DIV') {
+                var img = document.createElement('img');
+                img.id = 'foto-preview';
+                img.src = e.target.result;
+                img.alt = 'Foto nova';
+                img.className = 'w-20 h-20 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600';
+                preview.parentNode.replaceChild(img, preview);
+            } else {
+                preview.src = e.target.result;
+            }
+        };
+        reader.readAsDataURL(this.files[0]);
+    } else {
+        btnSalvar.disabled = true;
+    }
+});
+
+// Submit do formulário de foto
+document.getElementById('form-foto').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    var btn = document.getElementById('btn-salvar-foto');
+    var btnTexto = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Enviando...';
+    
+    var formData = new FormData(this);
+    
+    try {
+        var res = await fetch('/user/perfil/foto', {
+            method: 'POST',
+            body: formData
+        });
+        
+        var data = await res.json();
+        
+        if (res.ok) {
+            alert('Foto atualizada com sucesso!');
+            window.location.reload();
+        } else {
+            alert(data.message || 'Erro ao atualizar foto.');
+        }
+    } catch (err) {
+        console.error('Erro:', err);
+        alert('Erro ao conectar com o servidor.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = btnTexto;
+    }
+});
+</script>
+
+<%- include('../partials/footer_app') %>

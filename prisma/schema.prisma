@@ -1,0 +1,254 @@
+// file: prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- ENUMs ----
+enum TipoUsuario {
+  aluno
+  professor
+  administrador 
+}
+
+enum StatusSolicitacao {
+  pendente
+  aprovada
+  rejeitada
+}
+
+enum UserStatus {
+  ativo
+  inativo
+}
+
+enum Instituicao {
+  IFSUL_Gravatai 
+  Outro
+}
+
+// ---- Modelos de Entidade ----
+
+model Usuario {
+  id            Int      @id @default(autoincrement())
+  nome          String   @db.VarChar(100)
+  email         String   @unique @db.VarChar(100)
+  senha         String   @db.VarChar(255)
+  foto_perfil   String?  @db.VarChar(255)
+  instituicao   Instituicao @default(IFSUL_Gravatai)
+  tipo          TipoUsuario 
+  status        UserStatus @default(ativo) 
+  data_cadastro DateTime @default(now())
+
+  // Relacionamentos como Professor/Criador
+  cursosCriados     Curso[]       @relation("ProfessorCursos")
+  aulasCriadas      Aula[]        @relation("ProfessorAulas")
+  atividadesCriadas Atividade[]   @relation("ProfessorAtividades")
+  materiaisCriados  Material[]    @relation("ProfessorMateriais")
+
+  // Relacionamentos como Aluno
+  inscricoes Inscricao[]
+
+  // Relacionamentos de Interação
+  publicacoes   Publicacao[]
+  comentarios   Comentario[]
+  notificacoes  Notificacao[]
+}
+
+model Solicitacao {
+  id               Int      @id @default(autoincrement())
+  nome             String   @db.VarChar(100)
+  email            String   @unique @db.VarChar(100)
+  senha_hash       String   @db.VarChar(255)
+  foto_perfil      String?  @db.VarChar(255)
+  instituicao      Instituicao @default(IFSUL_Gravatai)
+  status           StatusSolicitacao @default(pendente)
+  data_solicitacao DateTime @default(now())
+}
+
+model Curso {
+  id           Int      @id @default(autoincrement())
+  titulo       String   @db.VarChar(255)
+  materia      String   @db.VarChar(100)
+  descricao    String?  @db.Text 
+  capa_curso   String   @db.VarChar(255)
+  senha_acesso String?  @db.VarChar(5)
+  usuario_id   Int
+
+  professor  Usuario     @relation("ProfessorCursos", fields: [usuario_id], references: [id])
+  inscricoes Inscricao[]
+  aulas      Aula[]
+  atividades Atividade[]
+  materiais  Material[]
+  listas     Lista[]
+  publicacoes Publicacao[]
+
+  @@index([usuario_id])
+}
+
+model Lista {
+  id         Int      @id @default(autoincrement())
+  titulo     String   @db.VarChar(255)
+  descricao  String?  @db.Text
+  ordem      Int      @default(0)
+  curso_id   Int
+
+  curso      Curso       @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  aulas      Aula[]
+  atividades Atividade[]
+  materiais  Material[]
+
+  @@index([curso_id])
+}
+
+model Inscricao {
+  id             Int      @id @default(autoincrement())
+  usuario_id     Int
+  curso_id       Int
+  data_inscricao DateTime @default(now())
+
+  aluno     Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  curso     Curso       @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  progresso Progresso[]
+
+  @@unique([usuario_id, curso_id])
+  @@index([curso_id])
+}
+
+model Aula {
+  id         Int       @id @default(autoincrement())
+  titulo     String    @db.VarChar(255)
+  descricao  String?   @db.Text
+  capa_aula  String?   @db.VarChar(255)
+  video      String    @db.VarChar(255)
+  duracao    Int?
+  ordem      Int       @default(0)
+  data_prazo DateTime?
+  curso_id   Int
+  usuario_id Int
+  lista_id   Int?
+
+  curso      Curso       @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  professor  Usuario     @relation("ProfessorAulas", fields: [usuario_id], references: [id])
+  lista      Lista?      @relation(fields: [lista_id], references: [id], onDelete: SetNull)
+  progressos Progresso[]
+
+  @@index([curso_id])
+  @@index([usuario_id])
+  @@index([lista_id])
+}
+
+model Atividade {
+  id         Int       @id @default(autoincrement())
+  titulo     String    @db.VarChar(255)
+  descricao  String?   @db.Text
+  conteudo   Json?
+  ordem      Int       @default(0)
+  data_prazo DateTime?
+  curso_id   Int
+  usuario_id Int
+  lista_id   Int?
+
+  curso      Curso       @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  professor  Usuario     @relation("ProfessorAtividades", fields: [usuario_id], references: [id])
+  lista      Lista?      @relation(fields: [lista_id], references: [id], onDelete: SetNull)
+  progressos Progresso[]
+
+  @@index([curso_id])
+  @@index([usuario_id])
+  @@index([lista_id])
+}
+
+model Material {
+  id           Int      @id @default(autoincrement())
+  titulo       String   @db.VarChar(255)
+  descricao    String?  @db.Text
+  arquivo      String   @db.VarChar(255)
+  tipo_arquivo String   @db.VarChar(20)
+  tamanho      Int?
+  ordem        Int      @default(0)
+  curso_id     Int
+  usuario_id   Int
+  lista_id     Int?
+
+  curso     Curso   @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  professor Usuario @relation("ProfessorMateriais", fields: [usuario_id], references: [id])
+  lista     Lista?  @relation(fields: [lista_id], references: [id], onDelete: SetNull)
+
+  @@index([curso_id])
+  @@index([usuario_id])
+  @@index([lista_id])
+}
+
+model Publicacao {
+  id           Int      @id @default(autoincrement())
+  conteudo     String   @db.Text
+  curso_id     Int      // FK para o Curso
+  usuario_id   Int      // FK para o Autor
+  data_criacao DateTime @default(now())
+  data_edicao  DateTime @updatedAt
+
+  // Relacionamentos
+  curso       Curso        @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  autor       Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  comentarios Comentario[]
+
+  @@index([curso_id])
+  @@index([usuario_id])
+}
+
+model Comentario {
+  id            Int      @id @default(autoincrement())
+  conteudo      String   @db.Text
+  publicacao_id Int      // FK para a Publicação
+  usuario_id    Int      // FK para o Autor
+  data_criacao  DateTime @default(now())
+  data_edicao   DateTime @updatedAt
+
+  // Relacionamentos
+  publicacao Publicacao @relation(fields: [publicacao_id], references: [id], onDelete: Cascade)
+  autor      Usuario    @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@index([publicacao_id])
+  @@index([usuario_id])
+}
+  
+
+model Notificacao {
+  id         Int      @id @default(autoincrement())
+  tipo       String   @db.VarChar(50)
+  titulo     String   @db.VarChar(255)
+  mensagem   String   @db.Text
+  link       String?  @db.VarChar(255)
+  lida       Boolean  @default(false)
+  data_envio DateTime @default(now())
+  usuario_id Int
+
+  usuario Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@index([usuario_id])
+}
+
+model Progresso {
+  id               Int       @id @default(autoincrement())
+  inscricao_id     Int
+  aula_id          Int?
+  atividade_id     Int?
+  pontuacao        Int?
+  concluida        Boolean   @default(true)
+  data_conclusao   DateTime  @default(now())
+
+  inscricao Inscricao  @relation(fields: [inscricao_id], references: [id], onDelete: Cascade)
+  aula      Aula?      @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  atividade Atividade? @relation(fields: [atividade_id], references: [id], onDelete: Cascade)
+
+  @@unique([inscricao_id, aula_id])
+  @@unique([inscricao_id, atividade_id])
+  @@index([aula_id])
+  @@index([atividade_id])
+}

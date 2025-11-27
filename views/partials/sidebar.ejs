@@ -1,0 +1,76 @@
+<!-- file: views/partials/sidebar.ejs -->
+
+<aside id="sidebar" 
+       class="fixed inset-y-0 left-0 transform -translate-x-full 
+              md:relative md:translate-x-0 md:w-64  
+              transition-all duration-300 ease-in-out 
+              flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
+              flex-shrink-0 z-40 overflow-hidden">
+    
+    <div class="flex items-center py-4 flex-shrink-0 px-4"> 
+        <a href="/inicio" class="flex items-center">
+            <span class="bg-teal-600 dark:bg-teal-500 text-white rounded-md px-2 py-1 mr-2 text-xl font-bold">L</span> 
+            <span class="text-2xl font-bold text-gray-900 dark:text-white">LearnFlow</span>
+        </a>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto p-4 space-y-2"> 
+        <% 
+        const linkClass = (linkName) => `flex items-center px-3 py-2 text-sm font-medium rounded-md group ${
+            (typeof activeLink !== 'undefined' && activeLink === linkName) 
+            ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
+            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
+        }`; 
+        const iconBaseClass = "fa-fw mr-3 flex-shrink-0 w-5 h-5"; 
+        %>
+
+        <div>
+            <h3 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Principal</h3>
+            <div class="mt-1 space-y-1">
+                <a href="/inicio" class="<%= linkClass('inicio') %>"><i class="fa-solid fa-house <%= iconBaseClass %>"></i> Início</a>
+                
+                <a href="/cursos" class="<%= linkClass('meus_cursos') %>"><i class="fa-solid fa-graduation-cap <%= iconBaseClass %>"></i> Meus Cursos</a>
+            </div>
+        </div>
+        
+         <% if (usuario && usuario.tipo === 'administrador') { %>
+            <div class="pt-4">
+                <h3 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Admin</h3>
+                <div class="mt-1 space-y-1">
+                    <a href="/admin/estatisticas" class="<%= linkClass('dashboard') %>"><i class="fa-solid fa-chart-simple <%= iconBaseClass %>"></i> Dashboard</a>
+                    <a href="/admin/usuarios" class="<%= linkClass('usuarios') %>"><i class="fa-solid fa-users <%= iconBaseClass %>"></i> Usuários</a>
+                    <a href="/admin/solicitacoes" class="<%= linkClass('solicitacoes') %>"><i class="fa-solid fa-user-plus <%= iconBaseClass %>"></i> Solicitações</a> 
+                </div>
+            </div>
+         <% } %>
+        
+        <div class="pt-4">
+            <h3 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Conta</h3>
+            <div class="mt-1 space-y-1">
+                <a href="/user/perfil" class="<%= linkClass('perfil') %>"><i class="fa-solid fa-user-circle <%= iconBaseClass %>"></i> Perfil</a>
+                <a href="#" class="<%= linkClass('notificacoes') %>"><i class="fa-solid fa-bell <%= iconBaseClass %>"></i> Notificações</a>
+                <a href="/user/configuracoes" class="<%= linkClass('configuracoes') %>"><i class="fa-solid fa-gear <%= iconBaseClass %>"></i> Configurações</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700"> 
+        <a href="/user/perfil" class="flex items-center group w-full">
+            <% if (usuario && usuario.foto_perfil) { %>
+                <img class="h-9 w-9 rounded-full object-cover flex-shrink-0" src="/uploads/images/<%= usuario.foto_perfil %>" alt="Foto do usuário">
+            <% } else { %>
+                <span class="h-9 w-9 rounded-full bg-teal-100 dark:bg-teal-700 text-teal-700 dark:text-teal-100 flex items-center justify-center font-semibold flex-shrink-0">
+                    <%= (usuario && usuario.nome) ? usuario.nome.charAt(0).toUpperCase() : 'U' %>
+                </span>
+            <% } %>
+            <div class="ml-3 min-w-0 flex-1">
+                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    <%= (usuario && usuario.nome) ? usuario.nome : 'Usuário' %>
+                </p>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">
+                    <%= (usuario && usuario.email) ? usuario.email : 'admin@edu.com' %>
+                </p>
+            </div>
+        </a>
+    </div>
+</aside>

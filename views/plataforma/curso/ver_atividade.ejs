@@ -1,0 +1,197 @@
+<!-- file: views/plataforma/curso/ver_atividade.ejs -->
+
+<%- include('../../partials/header_app') %>
+
+<main class="flex-1 overflow-y-auto">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-6">
+        
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <a href="/cursos/<%= curso.id %>/atividades" class="hover:text-teal-600 dark:hover:text-teal-400">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Voltar às Atividades
+            </a>
+            <span>/</span>
+            <span class="text-gray-700 dark:text-gray-300"><%= atividade.titulo %></span>
+        </nav>
+        
+        <!-- Cabeçalho da Atividade -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= atividade.titulo %></h1>
+                    <% if (atividade.lista) { %>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            <i class="fa-solid fa-folder mr-1"></i> <%= atividade.lista.titulo %>
+                        </p>
+                    <% } %>
+                </div>
+                
+                <% if (atividadeConcluida) { %>
+                    <div class="text-center">
+                        <span class="flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg text-sm font-medium">
+                            <i class="fa-solid fa-check-circle"></i> Concluída
+                        </span>
+                        <% if (pontuacao !== null) { %>
+                            <p class="text-2xl font-bold text-green-600 dark:text-green-400 mt-2"><%= pontuacao %>%</p>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+            
+            <% if (atividade.descricao) { %>
+                <p class="text-gray-700 dark:text-gray-300 mt-4"><%= atividade.descricao %></p>
+            <% } %>
+            
+            <% if (atividade.data_prazo) { %>
+                <div class="mt-4 flex items-center text-sm 
+                    <% 
+                    var agora = new Date();
+                    var prazo = new Date(atividade.data_prazo);
+                    var atrasado = agora > prazo && !atividadeConcluida;
+                    %>
+                    <%= atrasado ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' %>">
+                    <i class="fa-solid fa-calendar mr-2"></i>
+                    Prazo: <%= prazo.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) %>
+                    <% if (atrasado) { %>
+                        <span class="ml-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 px-2 py-0.5 rounded text-xs">
+                            Atrasado
+                        </span>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+        
+        <% if (!eDonoCurso && inscricao && !atividadeConcluida) { %>
+            <!-- Formulário de Respostas -->
+            <form id="form-atividade" class="space-y-6">
+                <% 
+                var perguntas = atividade.conteudo && atividade.conteudo.perguntas ? atividade.conteudo.perguntas : [];
+                %>
+                <% perguntas.forEach(function(pergunta, index) { %>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                            Pergunta <%= index + 1 %>
+                        </h3>
+                        <p class="text-gray-800 dark:text-gray-200 mb-4"><%= pergunta.enunciado %></p>
+                        
+                        <div class="space-y-3">
+                            <% pergunta.opcoes.forEach(function(opcao) { %>
+                                <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                    <input type="radio" 
+                                           name="pergunta-<%= pergunta.id %>" 
+                                           value="<%= opcao.id %>"
+                                           class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300">
+                                    <span class="ml-3 text-gray-700 dark:text-gray-300"><%= opcao.texto %></span>
+                                </label>
+                            <% }); %>
+                        </div>
+                    </div>
+                <% }); %>
+                
+                <% if (perguntas.length > 0) { %>
+                    <button type="submit" 
+                            id="btn-submeter"
+                            class="w-full py-3 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white rounded-lg font-medium transition">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Enviar Respostas
+                    </button>
+                <% } else { %>
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4 text-center">
+                        <i class="fa-solid fa-exclamation-triangle text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-yellow-700 dark:text-yellow-300">Esta atividade ainda não possui perguntas cadastradas.</p>
+                    </div>
+                <% } %>
+            </form>
+        <% } else if (atividadeConcluida) { %>
+            <!-- Resultado -->
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+                <i class="fa-solid fa-trophy text-5xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Atividade Concluída!</h2>
+                <% if (pontuacao !== null) { %>
+                    <p class="text-gray-600 dark:text-gray-400 mt-2">Sua pontuação:</p>
+                    <p class="text-5xl font-bold text-teal-600 dark:text-teal-400 mt-2"><%= pontuacao %>%</p>
+                <% } %>
+                <a href="/cursos/<%= curso.id %>/atividades" 
+                   class="mt-6 inline-block px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg font-medium transition">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Voltar às Atividades
+                </a>
+            </div>
+        <% } else { %>
+            <!-- Professor vendo atividade -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Prévia das Perguntas</h3>
+                <% 
+                var perguntas = atividade.conteudo && atividade.conteudo.perguntas ? atividade.conteudo.perguntas : [];
+                %>
+                <% if (perguntas.length > 0) { %>
+                    <div class="space-y-4">
+                        <% perguntas.forEach(function(pergunta, index) { %>
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <p class="font-medium text-gray-900 dark:text-white">
+                                    <%= index + 1 %>. <%= pergunta.enunciado %>
+                                </p>
+                                <div class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400">
+                                    <% pergunta.opcoes.forEach(function(opcao) { %>
+                                        <p class="<%= opcao.id === pergunta.resposta_correta ? 'text-green-600 dark:text-green-400 font-medium' : '' %>">
+                                            <%= opcao.id %>) <%= opcao.texto %>
+                                            <% if (opcao.id === pergunta.resposta_correta) { %>
+                                                <i class="fa-solid fa-check ml-1"></i>
+                                            <% } %>
+                                        </p>
+                                    <% }); %>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <p class="text-gray-500 dark:text-gray-400">Nenhuma pergunta cadastrada.</p>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</main>
+
+<script>
+var cursoId = <%= curso.id %>;
+var atividadeId = <%= atividade.id %>;
+
+document.getElementById('form-atividade')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    var btn = document.getElementById('btn-submeter');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+    
+    // Coletar respostas
+    var respostas = {};
+    var formData = new FormData(this);
+    for (var pair of formData.entries()) {
+        var perguntaId = pair[0].replace('pergunta-', '');
+        respostas[perguntaId] = pair[1];
+    }
+    
+    try {
+        var res = await fetch('/cursos/' + cursoId + '/atividades/' + atividadeId + '/submeter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ respostas: respostas })
+        });
+        
+        var data = await res.json();
+        
+        if (res.ok) {
+            alert('Atividade enviada! Pontuação: ' + data.pontuacao + '%');
+            window.location.reload();
+        } else {
+            alert(data.error || 'Erro ao enviar atividade.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Enviar Respostas';
+        }
+    } catch (err) {
+        alert('Erro ao conectar com o servidor.');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Enviar Respostas';
+    }
+});
+</script>
+
+<%- include('../../partials/footer_app') %>

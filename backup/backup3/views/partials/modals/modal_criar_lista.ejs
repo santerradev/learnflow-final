@@ -1,0 +1,142 @@
+<!-- Modal Criar Nova Lista -->
+<div id="modalCriarLista" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4 fade-in">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-folder text-teal-600"></i>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Nova Lista
+                </h3>
+            </div>
+            <button onclick="closeModalCriarLista()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <form id="formCriarLista" onsubmit="return handleCriarLista(event)">
+            <div class="p-6 space-y-4">
+                <!-- Título da Lista -->
+                <div>
+                    <label for="tituloLista" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Título da Lista <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="tituloLista" 
+                        name="titulo" 
+                        placeholder="Ex: Álgebra Linear"
+                        required
+                        maxlength="100"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Descrição -->
+                <div>
+                    <label for="descricaoLista" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Descrição
+                    </label>
+                    <textarea 
+                        id="descricaoLista" 
+                        name="descricao" 
+                        rows="3"
+                        placeholder="Descreva o tópico..."
+                        maxlength="500"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+                    ></textarea>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        Máximo 500 caracteres
+                    </p>
+                </div>
+
+                <input type="hidden" name="cursoId" id="cursoIdLista" value="<%= typeof cursoId !== 'undefined' ? cursoId : '' %>">
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700">
+                <button 
+                    type="button"
+                    onclick="closeModalCriarLista()" 
+                    class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium transition"
+                >
+                    Cancelar
+                </button>
+                <button 
+                    type="submit"
+                    class="px-4 py-2 btn-primary text-white rounded-lg font-medium transition"
+                >
+                    <i class="fas fa-plus mr-2"></i>
+                    Criar Lista
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModalCriarLista(cursoId = null) {
+        const modal = document.getElementById('modalCriarLista');
+        const cursoIdInput = document.getElementById('cursoIdLista');
+        
+        if (cursoId) {
+            cursoIdInput.value = cursoId;
+        }
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        // Focar no input
+        setTimeout(() => {
+            document.getElementById('tituloLista').focus();
+        }, 100);
+    }
+
+    function closeModalCriarLista() {
+        const modal = document.getElementById('modalCriarLista');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        
+        // Limpar formulário
+        document.getElementById('formCriarLista').reset();
+    }
+
+    async function handleCriarLista(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData);
+        
+        try {
+            showLoading('Criando lista...');
+            
+            const response = await fetch(`/cursos/${data.cursoId}/listas`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showAlert('Lista criada com sucesso!', 'success');
+                closeModalCriarLista();
+                
+                // Recarregar página ou atualizar lista
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showAlert(result.error || 'Erro ao criar lista', 'error');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showAlert('Erro ao criar lista', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+</script>

@@ -1,0 +1,294 @@
+<!-- file: views/plataforma/curso/mural.ejs -->
+
+<%- include('../../partials/header_app') %>
+
+<main class="flex-1 overflow-y-auto">
+    <%- include('../../partials/curso/header_curso') %>
+    
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-6">
+        <%- include('../../partials/curso/nav_curso') %>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Coluna Principal -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Formulário de Nova Publicação -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <form id="form-nova-publicacao" class="space-y-3">
+                        <textarea 
+                            id="conteudo-publicacao"
+                            rows="3" 
+                            class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-teal-500 focus:border-teal-500 resize-none" 
+                            placeholder="Anuncie algo para a turma..."></textarea>
+                        <div class="flex justify-end">
+                            <button type="submit" 
+                                    class="flex items-center gap-2 px-4 py-2 bg-teal-600 rounded-lg text-sm font-medium text-white hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 transition disabled:opacity-50"
+                                    id="btn-publicar">
+                                <i class="fa-solid fa-paper-plane"></i> Postar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Lista de Publicações -->
+                <div id="lista-publicacoes" class="space-y-4">
+                    <% if (publicacoes && publicacoes.length > 0) { %>
+                        <% publicacoes.forEach(pub => { %>
+                            <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700" 
+                                 data-publicacao-id="<%= pub.id %>">
+                                <!-- Cabeçalho da Publicação -->
+                                <div class="flex justify-between items-start">
+                                    <div class="flex items-center">
+                                        <% if (pub.autor.foto_perfil) { %>
+                                            <img class="h-10 w-10 rounded-full object-cover" 
+                                                 src="/uploads/images/<%= pub.autor.foto_perfil %>" 
+                                                 alt="<%= pub.autor.nome %>">
+                                        <% } else { %>
+                                            <span class="h-10 w-10 rounded-full bg-teal-100 dark:bg-teal-700 text-teal-700 dark:text-teal-100 flex items-center justify-center font-semibold">
+                                                <%= pub.autor.nome.charAt(0).toUpperCase() %>
+                                            </span>
+                                        <% } %>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                                <%= pub.autor.nome %>
+                                                <% if (pub.autor.tipo === 'professor' || pub.autor.tipo === 'administrador') { %>
+                                                    <span class="ml-1 text-xs bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 px-1.5 py-0.5 rounded">
+                                                        <%= pub.autor.tipo === 'professor' ? 'Professor' : 'Admin' %>
+                                                    </span>
+                                                <% } %>
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                <%= new Date(pub.data_criacao).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <% if (pub.autor.id === usuario.id || usuario.tipo === 'administrador' || eDonoCurso) { %>
+                                        <div class="relative">
+                                            <button class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 dropdown-trigger"
+                                                    onclick="toggleDropdown(this)">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                            <div class="dropdown-menu hidden absolute right-0 mt-1 w-32 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600 z-10">
+                                                <% if (pub.autor.id === usuario.id) { %>
+                                                    <button onclick="editarPublicacao(<%= pub.id %>)" 
+                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                        <i class="fa-solid fa-pen mr-2"></i> Editar
+                                                    </button>
+                                                <% } %>
+                                                <button onclick="deletarPublicacao(<%= pub.id %>)" 
+                                                        class="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                    <i class="fa-solid fa-trash mr-2"></i> Excluir
+                                                </button>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                
+                                <!-- Conteúdo da Publicação -->
+                                <p class="mt-4 text-gray-800 dark:text-gray-200 whitespace-pre-wrap"><%= pub.conteudo %></p>
+                                
+                                <!-- Comentários -->
+                                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                    <button onclick="toggleComentarios(<%= pub.id %>)" 
+                                            class="text-sm text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400">
+                                        <i class="fa-solid fa-comment mr-1"></i> 
+                                        <%= pub.comentarios.length %> comentário(s)
+                                    </button>
+                                    
+                                    <div id="comentarios-<%= pub.id %>" class="mt-3 space-y-3 hidden">
+                                        <% pub.comentarios.forEach(com => { %>
+                                            <div class="flex items-start" data-comentario-id="<%= com.id %>">
+                                                <% if (com.autor.foto_perfil) { %>
+                                                    <img class="h-8 w-8 rounded-full object-cover flex-shrink-0" 
+                                                         src="/uploads/images/<%= com.autor.foto_perfil %>" 
+                                                         alt="<%= com.autor.nome %>">
+                                                <% } else { %>
+                                                    <span class="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center font-semibold text-sm flex-shrink-0">
+                                                        <%= com.autor.nome.charAt(0).toUpperCase() %>
+                                                    </span>
+                                                <% } %>
+                                                <div class="ml-2 flex-1">
+                                                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2">
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white"><%= com.autor.nome %></p>
+                                                        <p class="text-sm text-gray-800 dark:text-gray-200"><%= com.conteudo %></p>
+                                                    </div>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                        <%= new Date(com.data_criacao).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) %>
+                                                    </p>
+                                                </div>
+                                                <% if (com.autor.id === usuario.id || usuario.tipo === 'administrador' || eDonoCurso) { %>
+                                                    <button onclick="deletarComentario(<%= pub.id %>, <%= com.id %>)" 
+                                                            class="ml-2 text-gray-400 hover:text-red-500">
+                                                        <i class="fa-solid fa-times"></i>
+                                                    </button>
+                                                <% } %>
+                                            </div>
+                                        <% }) %>
+                                        
+                                        <!-- Formulário de Novo Comentário -->
+                                        <div class="flex items-start mt-3">
+                                            <% if (usuario.foto_perfil) { %>
+                                                <img class="h-8 w-8 rounded-full object-cover flex-shrink-0" 
+                                                     src="/uploads/images/<%= usuario.foto_perfil %>" 
+                                                     alt="<%= usuario.nome %>">
+                                            <% } else { %>
+                                                <span class="h-8 w-8 rounded-full bg-teal-100 dark:bg-teal-700 text-teal-700 dark:text-teal-100 flex items-center justify-center font-semibold text-sm flex-shrink-0">
+                                                    <%= usuario.nome.charAt(0).toUpperCase() %>
+                                                </span>
+                                            <% } %>
+                                            <div class="ml-2 flex-1 flex">
+                                                <input type="text" 
+                                                       id="comentario-input-<%= pub.id %>"
+                                                       placeholder="Escreva um comentário..." 
+                                                       class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-l-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-1 focus:ring-teal-500">
+                                                <button onclick="enviarComentario(<%= pub.id %>)" 
+                                                        class="px-3 py-2 bg-teal-600 text-white rounded-r-lg hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600">
+                                                    <i class="fa-solid fa-paper-plane"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+                            <i class="fa-solid fa-comments text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">Nenhuma publicação ainda.</p>
+                            <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Seja o primeiro a publicar algo!</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            
+            <!-- Coluna Lateral -->
+            <div class="lg:col-span-1">
+                <%- include('../../partials/curso/sidebar_info') %>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+const cursoId = <%= curso.id %>;
+
+// Toggle de dropdown
+function toggleDropdown(btn) {
+    const menu = btn.nextElementSibling;
+    document.querySelectorAll('.dropdown-menu').forEach(m => {
+        if (m !== menu) m.classList.add('hidden');
+    });
+    menu.classList.toggle('hidden');
+}
+
+// Fechar dropdowns ao clicar fora
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown-trigger')) {
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
+    }
+});
+
+// Toggle de comentários
+function toggleComentarios(pubId) {
+    const container = document.getElementById(`comentarios-${pubId}`);
+    container.classList.toggle('hidden');
+}
+
+// Criar publicação
+document.getElementById('form-nova-publicacao').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const conteudo = document.getElementById('conteudo-publicacao').value.trim();
+    if (!conteudo) return;
+    
+    const btn = document.getElementById('btn-publicar');
+    btn.disabled = true;
+    
+    try {
+        const res = await fetch(`/cursos/${cursoId}/publicacoes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ conteudo })
+        });
+        
+        if (res.ok) {
+            window.location.reload();
+        } else {
+            const data = await res.json();
+            showToast('Erro', data.error || 'Erro ao publicar.', 'error');
+        }
+    } catch (err) {
+        showToast('Erro', 'Erro ao conectar com o servidor.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+// Enviar comentário
+async function enviarComentario(pubId) {
+    const input = document.getElementById(`comentario-input-${pubId}`);
+    const conteudo = input.value.trim();
+    if (!conteudo) return;
+    
+    try {
+        const res = await fetch(`/cursos/${cursoId}/publicacoes/${pubId}/comentarios`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ conteudo })
+        });
+        
+        if (res.ok) {
+            window.location.reload();
+        } else {
+            const data = await res.json();
+            showToast('Erro', data.error || 'Erro ao comentar.', 'error');
+        }
+    } catch (err) {
+        showToast('Erro', 'Erro ao conectar com o servidor.', 'error');
+    }
+}
+
+// Deletar publicação
+async function deletarPublicacao(pubId) {
+    if (!confirm('Tem certeza que deseja excluir esta publicação?')) return;
+    
+    try {
+        const res = await fetch(`/cursos/${cursoId}/publicacoes/${pubId}`, {
+            method: 'DELETE'
+        });
+        
+        if (res.ok) {
+            document.querySelector(`[data-publicacao-id="${pubId}"]`).remove();
+            showToast('Sucesso', 'Publicação excluída.', 'success');
+        } else {
+            const data = await res.json();
+            showToast('Erro', data.error || 'Erro ao excluir.', 'error');
+        }
+    } catch (err) {
+        showToast('Erro', 'Erro ao conectar com o servidor.', 'error');
+    }
+}
+
+// Deletar comentário
+async function deletarComentario(pubId, comId) {
+    if (!confirm('Tem certeza que deseja excluir este comentário?')) return;
+    
+    try {
+        const res = await fetch(`/cursos/${cursoId}/publicacoes/${pubId}/comentarios/${comId}`, {
+            method: 'DELETE'
+        });
+        
+        if (res.ok) {
+            document.querySelector(`[data-comentario-id="${comId}"]`).remove();
+            showToast('Sucesso', 'Comentário excluído.', 'success');
+        } else {
+            const data = await res.json();
+            showToast('Erro', data.error || 'Erro ao excluir.', 'error');
+        }
+    } catch (err) {
+        showToast('Erro', 'Erro ao conectar com o servidor.', 'error');
+    }
+}
+</script>
+
+<%- include('../../partials/footer_app') %>

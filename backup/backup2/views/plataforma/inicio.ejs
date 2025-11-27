@@ -1,0 +1,22 @@
+<!-- file: views/plataforma/inicio.ejs -->
+
+<%- include('../partials/header_app')%>
+
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Bem-vindo de volta!</h1>
+    <p class="text-sm text-gray-600 dark:text-gray-400">Seus cursos estão prontos para você</p>
+</div>
+
+<% if (cursos.length === 0) { %>
+    <div class="text-center text-gray-500 dark:text-gray-400 mt-20">
+        <p>Nenhum curso encontrado.</p>
+    </div>
+<% } else { %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% cursos.forEach(curso => { %>
+            <%- include('../partials/curso_card', { curso: curso })%>
+        <% }) %>
+    </div>
+<% } %>
+
+<%- include('../partials/footer_app')%>

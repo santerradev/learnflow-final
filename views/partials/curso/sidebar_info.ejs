@@ -1,0 +1,79 @@
+<!-- file: views/partials/curso/sidebar_info.ejs -->
+<!-- Card lateral com informações e progresso do curso -->
+
+<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+    <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Informações do Curso</h3>
+    
+    <!-- Instrutor -->
+    <div class="flex items-center mb-4">
+        <% if (curso.professor.foto_perfil) { %>
+            <img src="/uploads/images/<%= curso.professor.foto_perfil %>" 
+                 alt="<%= curso.professor.nome %>" 
+                 class="h-12 w-12 rounded-full object-cover">
+        <% } else { %>
+            <span class="h-12 w-12 rounded-full bg-teal-100 dark:bg-teal-700 text-teal-700 dark:text-teal-100 flex items-center justify-center text-lg font-semibold">
+                <%= curso.professor.nome.charAt(0).toUpperCase() %>
+            </span>
+        <% } %>
+        <div class="ml-3">
+            <p class="text-sm font-medium text-gray-900 dark:text-white"><%= curso.professor.nome %></p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Instrutor</p>
+        </div>
+    </div>
+    
+    <!-- Estatísticas -->
+    <div class="space-y-3 text-sm border-t border-gray-200 dark:border-gray-700 pt-4">
+        <div class="flex items-center text-gray-700 dark:text-gray-300">
+            <i class="fa-solid fa-video w-5 text-center mr-3 text-gray-400 dark:text-gray-500"></i>
+            <span><%= curso._count.aulas %> aulas</span>
+        </div>
+        <div class="flex items-center text-gray-700 dark:text-gray-300">
+            <i class="fa-solid fa-file-lines w-5 text-center mr-3 text-gray-400 dark:text-gray-500"></i>
+            <span><%= curso._count.atividades %> atividades</span>
+        </div>
+        <div class="flex items-center text-gray-700 dark:text-gray-300">
+            <i class="fa-solid fa-users w-5 text-center mr-3 text-gray-400 dark:text-gray-500"></i>
+            <span><%= curso._count.inscricoes %> inscritos</span>
+        </div>
+    </div>
+    
+    <% if (!eDonoCurso && inscricao) { %>
+        <!-- Progresso do Aluno -->
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+            <h4 class="text-md font-semibold mb-2 text-gray-900 dark:text-white">Seu Progresso</h4>
+            <div class="flex items-center gap-3">
+                <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div class="bg-teal-600 dark:bg-teal-500 h-2.5 rounded-full transition-all duration-300 progress-bar" 
+                        data-progress="<%= progresso.percentual %>"></div>
+                </div>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[3rem] text-right">
+                    <%= progresso.percentual %>%
+                </span>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                <%= progresso.aulasConcluidas %> de <%= curso._count.aulas %> aulas concluídas
+            </p>
+        </div>
+        
+        <!-- Estatísticas do Aluno -->
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+            <h4 class="text-md font-semibold mb-2 text-gray-900 dark:text-white">Estatísticas</h4>
+            <div class="text-sm space-y-2">
+                <div class="flex justify-between text-gray-700 dark:text-gray-300">
+                    <span>Aulas concluídas:</span>
+                    <span class="font-medium"><%= progresso.aulasConcluidas %>/<%= curso._count.aulas %></span>
+                </div>
+                <div class="flex justify-between text-gray-700 dark:text-gray-300">
+                    <span>Atividades feitas:</span>
+                    <span class="font-medium"><%= progresso.atividadesConcluidas %>/<%= curso._count.atividades %></span>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<script>
+document.querySelectorAll('.progress-bar').forEach(bar => {
+    bar.style.width = bar.dataset.progress + '%';
+});
+</script>
